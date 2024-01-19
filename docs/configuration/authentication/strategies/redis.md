@@ -1,16 +1,16 @@
 # Redis
 
-[Redis](https://redis.io/) is an ultra-fast key-store database. As such, it's a good candidate for token management. In this strategy, a token is generated and associated with the user id. in the database. On each request, we try to retrieve this token from Redis to get the corresponding user id.
+[Redis](https://redis.io/) - это база данных с ультра-быстрым доступом по ключу. Таким образом, он является отличным кандидатом для управления токенами. В этой стратегии токен генерируется и связывается с идентификатором пользователя в базе данных. При каждом запросе мы пытаемся извлечь этот токен из Redis, чтобы получить соответствующий идентификатор пользователя.
 
-## Installation
+## Установка
 
-You should install the library with the optional dependencies for Redis:
+Вы должны установить библиотеку с дополнительными зависимостями для Redis:
 
 ```sh
 pip install 'fastapi-users[redis]'
 ```
 
-## Configuration
+## Конфигурация
 
 ```py
 import redis.asyncio
@@ -22,15 +22,15 @@ def get_redis_strategy() -> RedisStrategy:
     return RedisStrategy(redis, lifetime_seconds=3600)
 ```
 
-As you can see, instantiation is quite simple. It accepts the following arguments:
+Как видите, создание экземпляра довольно просто. Он принимает следующие аргументы:
 
-* `redis` (`redis.asyncio.Redis`): An instance of `redis.asyncio.Redis`. Note that the `decode_responses` flag set to `True` is necessary.
-* `lifetime_seconds` (`Optional[int]`): The lifetime of the token in seconds. Defaults to `None`, which means the token doesn't expire.
-* `key_prefix` (`str`): The prefix used to set the key in the Redis stored. Defaults to `fastapi_users_token:`.
+* `redis` (`redis.asyncio.Redis`): Экземпляр `redis.asyncio.Redis`. Обратите внимание, что флаг `decode_responses`, установленный в `True`, необходим.
+* `lifetime_seconds` (`Optional[int]`): Срок действия токена в секундах. По умолчанию `None`, что означает, что токен не истекает.
+* `key_prefix` (`str`): Префикс, используемый для установки ключа в хранилище Redis. По умолчанию `fastapi_users_token:`.
 
-!!! tip "Why it's inside a function?"
-    To allow strategies to be instantiated dynamically with other dependencies, they have to be provided as a callable to the authentication backend.
+!!! tip "Почему это внутри функции?"
+    Чтобы стратегии можно было создавать динамически с другими зависимостями, они должны предоставляться как вызываемые функции для аутентификационного бэкенда.
 
-## Logout
+## Выход из системы
 
-On logout, this strategy will delete the token from the Redis store.
+При выходе из системы эта стратегия удалит токен из хранилища Redis.

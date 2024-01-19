@@ -1,73 +1,73 @@
-# Get current user
+# Получение текущего пользователя
 
-**FastAPI Users** provides a dependency callable to easily inject authenticated user in your routes. They are available from your `FastAPIUsers` instance.
+**FastAPI Users** предоставляет вызываемую зависимость для легкого внедрения аутентифицированного пользователя в ваши маршруты. Они доступны из вашего экземпляра `FastAPIUsers`.
 
-!!! tip
-    For more information about how to make an authenticated request to your API, check the documentation of your [Authentication method](../configuration/authentication/index.md).
+!!! Совет
+    Для получения дополнительной информации о том, как выполнить аутентифицированный запрос к вашему API, ознакомьтесь с документацией вашего [метода аутентификации](../configuration/authentication/index.md).
 
 ## `current_user`
 
-Return a dependency callable to retrieve currently authenticated user, passing the following parameters:
+Возвращает вызываемую зависимость для получения текущего аутентифицированного пользователя, передавая следующие параметры:
 
-* `optional`: If `True`, `None` is returned if there is no authenticated user or if it doesn't pass the other requirements. Otherwise, throw `401 Unauthorized`. Defaults to `False`.
-* `active`: If `True`, throw `401 Unauthorized` if the authenticated user is inactive. Defaults to `False`.
-* `verified`: If `True`, throw `403 Forbidden` if the authenticated user is not verified. Defaults to `False`.
-* `superuser`: If `True`, throw `403 Forbidden` if the authenticated user is not a superuser. Defaults to `False`.
-* `get_enabled_backends`: Optional dependency callable returning a list of enabled authentication backends. Useful if you want to dynamically enable some authentication backends based on external logic, like a configuration in database. By default, all specified authentication backends are enabled. *Please not however that every backends will appear in the OpenAPI documentation, as FastAPI resolves it statically.*
+* `optional`: Если `True`, возвращается `None`, если нет аутентифицированного пользователя или если он не проходит другие требования. В противном случае генерируется `401 Unauthorized`. По умолчанию `False`.
+* `active`: Если `True`, генерируется `401 Unauthorized`, если аутентифицированный пользователь неактивен. По умолчанию `False`.
+* `verified`: Если `True`, генерируется `403 Forbidden`, если аутентифицированный пользователь не подтвержден. По умолчанию `False`.
+* `superuser`: Если `True`, генерируется `403 Forbidden`, если аутентифицированный пользователь не является суперпользователем. По умолчанию `False`.
+* `get_enabled_backends`: Опциональная вызываемая зависимость, возвращающая список включенных бэкендов аутентификации. Полезно, если вы хотите динамически включать некоторые бэкенды аутентификации на основе внешней логики, например, конфигурации в базе данных. По умолчанию включаются все указанные бэкенды аутентификации. *Однако обратите внимание, что каждый бэкенд будет отображаться в документации OpenAPI, так как FastAPI разрешает это статически.*
 
-!!! tip "Create it once and reuse it"
-    This function is a **factory**, a function returning another function 🤯
+!!! Совет "Создайте ее один раз и используйте повторно"
+    Эта функция - **фабрика**, функция, возвращающая другую функцию 🤯
 
-    It's this returned function that will be the dependency called by FastAPI in your API routes.
+    Именно эта возвращенная функция будет вызываемой зависимостью, которую FastAPI вызывает в ваших маршрутах API.
 
-    To avoid having to generate it on each route and avoid issues when unit testing, it's **strongly recommended** that you assign the result in a variable and reuse it at will in your routes. The examples below demonstrate this pattern.
+    Чтобы избежать необходимости создавать ее на каждом маршруте и избежать проблем при модульном тестировании, **настоятельно рекомендуется** присвоить результат переменной и использовать его по желанию в ваших маршрутах. Приведенные ниже примеры демонстрируют этот подход.
 
-## Examples
+## Примеры
 
-### Get the current user (**active or not**)
+### Получение текущего пользователя (**активного или нет**)
 
 ```py
 current_user = fastapi_users.current_user()
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_user)):
-    return f"Hello, {user.email}"
+    return f"Привет, {user.email}"
 ```
 
-### Get the current **active** user
+### Получение текущего **активного** пользователя
 
 ```py
 current_active_user = fastapi_users.current_user(active=True)
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_active_user)):
-    return f"Hello, {user.email}"
+    return f"Привет, {user.email}"
 ```
 
-### Get the current **active** and **verified** user
+### Получение текущего **активного** и **подтвержденного** пользователя
 
 ```py
 current_active_verified_user = fastapi_users.current_user(active=True, verified=True)
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_active_verified_user)):
-    return f"Hello, {user.email}"
+    return f"Привет, {user.email}"
 ```
 
-### Get the current active **superuser**
+### Получение текущего активного **суперпользователя**
 
 ```py
 current_superuser = fastapi_users.current_user(active=True, superuser=True)
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_superuser)):
-    return f"Hello, {user.email}"
+    return f"Привет, {user.email}"
 ```
 
-### Dynamically enable authentication backends
+### Динамическое включение бэкендов аутентификации
 
-!!! warning
-    This is an advanced feature for cases where you have several authentication backends that are enabled conditionally. In most cases, you won't need this option.
+!!! Предупреждение
+    Это продвинутая функция для случаев, когда у вас есть несколько бэкендов аутентификации, которые включаются условно. В большинстве случаев вам не потребуется эта опция.
 
 ```py
 from fastapi import Request
@@ -93,7 +93,7 @@ cookie_backend = AuthenticationBackend(
 )
 
 async def get_enabled_backends(request: Request):
-    """Return the enabled dependencies following custom logic."""
+    """Возвращает включенные зависимости в соответствии с пользовательской логикой."""
     if request.url.path == "/protected-route-only-jwt":
         return [jwt_backend]
     else:
@@ -105,22 +105,24 @@ current_active_user = fastapi_users.current_user(active=True, get_enabled_backen
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_active_user)):
-    return f"Hello, {user.email}. You are authenticated with a cookie or a JWT."
+    return f"Привет, {user.email}. Вы аутентифицированы с помощью cookie или JWT."
 
 
 @app.get("/protected-route-only-jwt")
 def protected_route(user: User = Depends(current_active_user)):
-    return f"Hello, {user.email}. You are authenticated with a JWT."
+    return f"Привет, {user.email}. Вы аутентифицированы с помощью JWT."
 ```
 
-## In a path operation
+## В операции пути
 
-If you don't need the user in the route logic, you can use this syntax:
+Если вам не нужен пользователь в логике маршрута, вы можете использовать этот синтаксис:
 
 ```py
 @app.get("/protected-route", dependencies=[Depends(current_superuser)])
 def protected_route():
-    return "Hello, some user."
+    return "Привет
+
+, какой-то пользователь."
 ```
 
-You can read more about this [in FastAPI docs](https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-in-path-operation-decorators/).
+Вы можете узнать больше об этом [в документации FastAPI](https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-in-path-operation-decorators/).

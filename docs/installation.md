@@ -1,29 +1,27 @@
-# Installation
+# Установка
 
-You can add **FastAPI Users** to your FastAPI project in a few easy steps. First of all, install the dependency:
+Вы можете добавить **FastAPI Users** в свой проект FastAPI всего лишь в несколько простых шагов. Прежде всего, установите зависимость:
 
-## With SQLAlchemy support
+## С поддержкой SQLAlchemy
 
 ```sh
 pip install 'fastapi-users[sqlalchemy]'
 ```
 
-
-## With Beanie support
+## С поддержкой Beanie
 
 ```sh
 pip install 'fastapi-users[beanie]'
 ```
 
-## With Redis authentication backend support
+## С поддержкой аутентификации через бэкенд Redis
 
-Information on installing with proper database support can be found in the [Redis](configuration/authentication/strategies/redis.md) section.
+Информацию по установке с правильной поддержкой базы данных можно найти в разделе [Redis](configuration/authentication/strategies/redis.md).
 
-## With OAuth2 support
+## С поддержкой OAuth2
 
-Information on installing with proper database support can be found in the [OAuth2](configuration/oauth.md) section.
-
+Информацию по установке с правильной поддержкой базы данных можно найти в разделе [OAuth2](configuration/oauth.md).
 
 ---
 
-That's it! In the next section, we'll have an [overview](./configuration/overview.md) of how things work.
+Вот и всё! В следующем разделе мы рассмотрим [обзор](./configuration/overview.md) того, как это работает.

@@ -1,12 +1,12 @@
 # Flow
 
-This page will present you a complete registration and authentication flow once you've setup **FastAPI Users**. Each example will be presented with a `cURL` and an `axios` example.
+На этой странице будет представлен полный поток регистрации и аутентификации после установки **FastAPI Users**. Каждый пример будет представлен с использованием `cURL` и примера с `axios`.
 
-## 1. Registration
+## 1. Регистрация
 
-First step, of course, is to register as a user.
+Первый шаг, конечно, это зарегистрироваться в качестве пользователя.
 
-### Request
+### Запрос
 
 === "cURL"
     ``` bash
@@ -27,9 +27,9 @@ First step, of course, is to register as a user.
     .catch((error) => console.log(error));
     ```
 
-### Response
+### Ответ
 
-You'll get a JSON response looking like this:
+Вы получите JSON-ответ, который будет выглядеть так:
 
 ```json
 {
@@ -41,21 +41,21 @@ You'll get a JSON response looking like this:
 ```
 
 !!! info
-    Several things to bear in mind:
+    Несколько важных моментов:
 
-    * If you have defined other required fields in your `User` model (like a first name or a birthdate), you'll have to provide them in the payload.
-    * The user is active by default.
-    * The user cannot set `is_active` or `is_superuser` itself at registration. Only a superuser can do it by PATCHing the user.
+    * Если вы определили другие обязательные поля в своей модели `User` (например, имя или день рождения), вы должны предоставить их в теле запроса.
+    * Пользователь активен по умолчанию.
+    * Пользователь не может установить `is_active` или `is_superuser` самостоятельно при регистрации. Это может сделать только суперпользователь, обновив пользователя с помощью PATCH.
 
-## 2. Login
+## 2. Логин
 
-Now, you can login as this new user.
+Теперь вы можете войти как этот новый пользователь.
 
-You can generate a [login route](../configuration/routers/auth.md) for each [authentication backend](../configuration/authentication/index.md). Each backend will have a different response.
+Вы можете создать [маршрут входа](../configuration/routers/auth.md) для каждого [бэкенда аутентификации](../configuration/authentication/index.md). Каждый бэкенд будет иметь различный ответ.
 
 ### Bearer + JWT
 
-#### Request
+#### Запрос
 
 === "cURL"
     ``` bash
@@ -86,11 +86,11 @@ You can generate a [login route](../configuration/routers/auth.md) for each [aut
     ```
 
 !!! warning
-    Notice that we don't send it as a JSON payload here but with **form data** instead. Also, the email is provided by a field named **`username`**.
+    Обратите внимание, что здесь мы не отправляем его как JSON-полезную нагрузку, а вместо этого используем **форму данных**. Кроме того, электронная почта предоставляется полем с именем **`username`**.
 
-#### Response
+#### Ответ
 
-You'll get a JSON response looking like this:
+Вы получите JSON-ответ, который будет выглядеть так:
 
 ```json
 {
@@ -99,11 +99,11 @@ You'll get a JSON response looking like this:
 }
 ```
 
-You can use this token to make authenticated requests as the user `king.arthur@camelot.bt`. We'll see how in the next section.
+Вы можете использовать этот токен для выполнения аутентифицированных запросов от имени пользователя `king.arthur@camelot.bt`. Мы рассмотрим это в следующем разделе.
 
 ### Cookie + JWT
 
-#### Request
+#### Запрос
 
 === "cURL"
     ``` bash
@@ -135,26 +135,28 @@ You can use this token to make authenticated requests as the user `king.arthur@c
     ```
 
 !!! warning
-    Notice that we don't send it as a JSON payload here but with **form data** instead. Also, the email is provided by a field named **`username`**.
+    Обратите внимание, что здесь мы не отправляем его как JSON-полезную нагрузку, а вместо этого используем **форму данных**. Кроме того, электронная почта предоставляется полем с именем **`username`**.
 
-#### Response
+#### Ответ
 
-You'll get an empty response. However, the response will come with a `Set-Cookie` header (that's why we added the `-v` option in `cURL` to see them).
+Вы получите пустой ответ. Однако ответ будет содержать заголовок `Set-Cookie` (поэтому мы добавили опцию `-v` в `cURL`, чтобы их увидеть).
 
 ```
-set-cookie: fastapiusersauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYzYwNjBmMTEtNTM0OS00YTI0LThiNGEtYTJhODc1ZGM1Mzk1IiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTg3ODE4OTQ3fQ.qNA4oPVYhoqrJIk-zvAyEfEVoEnP156G30H_SWEU0sU; HttpOnly; Max-Age=3600; Path=/; Secure
+set-cookie: fastapiusersauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYzYwNjBmMTEtNTM0OS00YTI0LThiNGEtYTJhODc1ZGM1Mzk1IiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTg3ODE4OTQ3fQ.qNA4oPVYhoqrJIk-z
+
+vAyEfEVoEnP156G30H_SWEU0sU; HttpOnly; Max-Age=3600; Path=/; Secure
 ```
 
-You can make authenticated requests as the user `king.arthur@camelot.bt` by setting a `Cookie` header with this cookie.
+Вы можете делать аутентифицированные запросы от имени пользователя `king.arthur@camelot.bt`, установив заголовок `Cookie` с этим файлом cookie.
 
 !!! tip
-    The cookie backend is more suited for browsers, as they handle them automatically. This means that if you make a login request in the browser, it will automatically store the cookie and automatically send it in subsequent requests.
+    Бэкенд cookie более подходит для браузеров, так как они обрабатывают их автоматически. Это означает, что если вы делаете запрос на вход в браузере, он автоматически сохранит файл cookie и автоматически отправит его в последующих запросах.
 
-## 3. Get my profile
+## 3. Получить мой профиль
 
-Now that we can authenticate, we can get our own profile data. Depending on your [authentication backend](../configuration/authentication/index.md), the method to authenticate the request will vary. We'll stick with JWT from now on.
+Теперь, когда мы можем проходить аутентификацию, мы можем получить данные своего профиля. В зависимости от [бэкенда аутентификации](../configuration/authentication/index.md), метод аутентификации запроса будет различаться. Мы будем использовать JWT.
 
-### Request
+### Запрос
 
 === "cURL"
     ``` bash
@@ -179,9 +181,9 @@ Now that we can authenticate, we can get our own profile data. Depending on your
     .catch((error) => console.log(error));
     ```
 
-### Response
+### Ответ
 
-You'll get a JSON response looking like this:
+Вы получите JSON-ответ, который будет выглядеть так:
 
 ```json
 {
@@ -193,13 +195,13 @@ You'll get a JSON response looking like this:
 ```
 
 !!! tip
-    If you use one of the [dependency callable](./current-user.md) to protect one of your own endpoint, you'll have to authenticate exactly in the same way.
+    Если вы используете одну из [вызываемых зависимостей](./current-user.md), чтобы защитить свой собственный конечный пункт, вы должны аутентифицироваться точно так же.
 
-## 4. Update my profile
+## 4. Обновление моего профиля
 
-We can also update our own profile. For example, we can change our password like this.
+Мы также можем обновлять свой собственный профиль. Например, мы можем изменить свой пароль так.
 
-### Request
+### Запрос
 
 === "cURL"
     ``` bash
@@ -228,9 +230,9 @@ We can also update our own profile. For example, we can change our password like
     .catch((error) => console.log(error));
     ```
 
-### Response
+### Ответ
 
-You'll get a JSON response looking like this:
+Вы получите JSON-ответ, который будет выглядеть так:
 
 ```json
 {
@@ -242,19 +244,19 @@ You'll get a JSON response looking like this:
 ```
 
 !!! info
-    Once again, the user cannot set `is_active` or `is_superuser` itself. Only a superuser can do it by PATCHing the user.
+    Еще раз, пользователь не может установить `is_active` или `is_superuser` самостоятельно. Это может сделать только суперпользователь, обновив пользователя с помощью PATCH.
 
-## 5. Become a superuser 🦸🏻‍♂️
+## 5. Стать суперпользователем 🦸🏻‍♂️
 
-If you want to manage the users of your application, you'll have to become a **superuser**.
+Если вы хотите управлять пользователями вашего приложения, вам придется стать **суперпользователем**.
 
-The very first superuser can only be set at **database level**: open it through a CLI or a GUI, find your user and set the `is_superuser` column/property to `true`.
+Первый суперпользователь может быть установлен только на **уровне базы данных**: откройте ее через интерфейс командной строки или графический интерфейс пользователя, найдите своего пользователя и установите свойство `is_superuser` в `true`.
 
-### 5.1. Get the profile of any user
+### 5.1. Получение профиля любого пользователя
 
-Now that you are a superuser, you can leverage the power of [superuser routes](./routes.md#superuser). You can for example get the profile of any user in the database given its id.
+Теперь, когда вы суперпользователь, вы можете использовать мощь [маршрутов суперпользователя](./routes.md#superuser). Вы, например, можете получить профиль любого пользователя в базе данных по его идентификатору.
 
-#### Request
+#### Запрос
 
 === "cURL"
     ``` bash
@@ -277,9 +279,9 @@ Now that you are a superuser, you can leverage the power of [superuser routes](.
     .catch((error) => console.log(error));
     ```
 
-#### Response
+#### Ответ
 
-You'll get a JSON response looking like this:
+Вы получите JSON-ответ, который будет выглядеть так:
 
 ```json
 {
@@ -290,11 +292,11 @@ You'll get a JSON response looking like this:
 }
 ```
 
-### 5.1. Update any user
+### 5.1. Обновление любого пользователя
 
-We can now update the profile of any user. For example, we can promote it as superuser.
+Теперь мы можем обновить профиль любого пользователя. Например, мы можем повысить его до суперпользователя.
 
-#### Request
+#### Запрос
 
 === "cURL"
     ``` bash
@@ -323,9 +325,9 @@ We can now update the profile of any user. For example, we can promote it as sup
     .catch((error) => console.log(error));
     ```
 
-#### Response
+#### Ответ
 
-You'll get a JSON response looking like this:
+Вы получите JSON-ответ, который будет выглядеть так:
 
 ```json
 {
@@ -336,11 +338,11 @@ You'll get a JSON response looking like this:
 }
 ```
 
-### 5.2. Delete any user
+### 5.2. Удаление любого пользователя
 
-Finally, we can delete a user.
+Наконец, мы можем удалить пользователя.
 
-#### Request
+#### Запрос
 
 === "cURL"
     ``` bash
@@ -365,15 +367,15 @@ Finally, we can delete a user.
     .catch((error) => console.log(error));
     ```
 
-#### Response
+#### Ответ
 
-You'll get an empty response.
+Вы получите пустой ответ.
 
-## 6. Logout
+## 6. Выход
 
-We can also end the session.
+Мы также можем завершить сеанс.
 
-### Request
+### Запрос
 
 === "cURL"
     ``` bash
@@ -396,12 +398,14 @@ We can also end the session.
     )
     .then((response) => console.log(response))
     .catch((error) => console.log(error));
-    ```
+    ``
 
-### Response
+`
 
-You'll get an empty response.
+### Ответ
 
-## Conclusion
+Вы получите пустой ответ.
 
-That's it! You now have a good overview of how you can manage the users through the API. Be sure to check the [Routes](./routes.md) page to have all the details about each endpoints.
+## Заключение
+
+Вот и все! Теперь у вас есть хороший обзор того, как вы можете управлять пользователями через API. Обязательно проверьте страницу [Маршруты](./routes.md), чтобы получить все детали по каждому из эндпоинтов.

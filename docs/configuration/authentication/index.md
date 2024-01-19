@@ -1,83 +1,85 @@
-# Authentication
+# Аутентификация
 
-**FastAPI Users** allows you to plug in several authentication methods.
+**FastAPI Users** позволяет подключать несколько методов аутентификации.
 
-## How it works?
+## Как это работает?
 
-You can have **several** authentication methods, e.g. a cookie authentication for browser-based queries and a JWT token authentication for pure API queries.
+У вас может быть **несколько** методов аутентификации, например, аутентификация по куки для запросов на основе браузера и аутентификация по токену JWT для чистых запросов API.
 
-When checking authentication, each method is run one after the other. The first method yielding a user wins. If no method yields a user, an `HTTPException` is raised.
+При проверке аутентификации каждый метод выполняется один за другим. Первый метод, возвращающий пользователя, выигрывает. Если ни один метод не возвращает пользователя, возникает `HTTPException`.
 
-For each backend, you'll be able to add a router with the corresponding `/login` and `/logout`. More on this in the [routers documentation](../routers/index.md).
+Для каждого бэкенда вы сможете добавить маршрутизатор с соответствующими `/login` и `/logout`. Больше об этом в [документации по роутерам](../routers/index.md).
 
-## Transport + Strategy = Authentication backend
+## Транспорт + Стратегия = Бэкенд аутентификации
 
-An authentication backend is composed of two parts:
+Бэкенд аутентификации состоит из двух частей:
 
-### Transport
+### Транспорт
 
-It manages how the token will be carried over the request. We currently provide two methods:
+Он управляет тем, как токен будет передаваться в запросе. В настоящее время мы предоставляем два метода:
 
 #### [Bearer](transports/bearer.md)
 
-The token will be sent through an `Authorization: Bearer` header.
+Токен будет отправлен через заголовок `Authorization: Bearer`.
 
-!!! tip "Pros and cons"
+!!! tip "За и против"
 
-    * ✅ Easy to read and set in every requests.
-    * ❌ Needs to be stored manually somewhere in the client.
+    * ✅ Легко читать и устанавливать в каждом запросе.
+    * ❌ Необходимо вручную сохранять где-то на клиенте.
 
-    ➡️ Use it if you want to implement a mobile application or a pure REST API.
+    ➡️ Используйте, если вы хотите реализовать мобильное приложение или чистый REST API.
 
 #### [Cookie](transports/cookie.md)
 
-The token will be sent through a cookie.
+Токен будет отправлен через куки.
 
-!!! tip "Pros and cons"
+!!! tip "За и против"
 
-    * ✅ Automatically stored and sent securely by web browsers in every requests.
-    * ✅ Automatically removed at expiration by web browsers.
-    * ❌ Needs a CSRF protection for maximum security.
-    * ❌ Harder to work with outside a browser, like a mobile app or a server.
+    * ✅ Автоматически сохраняется и отправляется безопасно в каждом запросе веб-браузером.
+    * ✅ Автоматически удаляется при истечении срока действия веб-браузерами.
+    * ❌ Необходима защита от CSRF для максимальной безопасности.
+    * ❌ Труднее работать вне браузера, например, в мобильном приложении или на сервере.
 
-    ➡️ Use it if you want to implement a web frontend.
+    ➡️ Используйте, если вы хотите реализовать веб-интерфейс.
 
-### Strategy
+### Стратегия
 
-It manages how the token is generated and secured. We currently provide three methods:
+Он управляет тем, как токен генерируется и защищается. В настоящее время мы предоставляем три метода:
 
 #### [JWT](strategies/jwt.md)
 
-The token is self-contained in a JSON Web Token.
+Токен содержится в JSON Web Token.
 
-!!! tip "Pros and cons"
+!!! tip "За и против"
 
-    * ✅ Self-contained: it doesn't need to be stored in a database.
-    * ❌ Can't be invalidated on the server-side: it's valid until it expires.
+    * ✅ Самодостаточный: его не нужно хранить в базе данных.
+    * ❌ Не может быть аннулирован на стороне сервера: он действителен до истечения срока действия.
 
-    ➡️ Use it if you want to get up-and-running quickly.
+    ➡️ Используйте, если вы хотите быстро запуститься.
 
 #### [Database](strategies/database.md)
 
-The token is stored in a table (or collection) in your database.
+Токен хранится в таблице (или коллекции) вашей базы данных.
 
-!!! tip "Pros and cons"
+!!! tip "За и против"
 
-    * ✅ Secure and performant.
-    * ✅ Tokens can be invalidated server-side by removing them from the database.
-    * ✅ Highly customizable: add your own fields, create an API to retrieve the active sessions of your users, etc.
-    * ❌ Configuration is a bit more complex.
+    * ✅ Безопасно и производительно.
+    * ✅ Токены могут быть аннулированы на стороне сервера путем их удаления из базы данных.
+    * ✅ Высокая настраиваемость: добавляйте свои собственные поля, создавайте API для получения активных сеансов ваших пользователей и т. д.
+    * ❌ Настройка сложнее.
 
-    ➡️ Use it if you want maximum flexibility in your token management.
+    ➡️ Используйте, если вы хотите максимальную гибкость в управлении токенами.
 
 #### [Redis](strategies/redis.md)
 
-The token is stored in a Redis key-store.
+Токен хранится в хранилище ключей Redis.
 
-!!! tip "Pros and cons"
+!!! tip "За и против"
 
-    * ✅ Secure and performant.
-    * ✅ Tokens can be invalidated server-side by removing them from Redis.
-    * ❌ A Redis server is needed.
+   
 
-    ➡️ Use it if you want maximum performance while being able to invalidate tokens.
+ * ✅ Безопасно и производительно.
+    * ✅ Токены могут быть аннулированы на стороне сервера путем их удаления из Redis.
+    * ❌ Необходим сервер Redis.
+
+    ➡️ Используйте, если вы хотите максимальную производительность и возможность аннулирования токенов.

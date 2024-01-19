@@ -5,47 +5,47 @@
 </p>
 
 <p align="center">
-    <em>Ready-to-use and customizable users management for FastAPI </em>
+    <em>Готовый к использованию и настраиваемый инструмент управления пользователями для FastAPI </em>
 </p>
 
 [![build](https://github.com/fastapi-users/fastapi-users/workflows/Build/badge.svg)](https://github.com/fastapi-users/fastapi-users/actions)
 [![codecov](https://codecov.io/gh/fastapi-users/fastapi-users/branch/master/graph/badge.svg)](https://codecov.io/gh/fastapi-users/fastapi-users)
 [![PyPI version](https://badge.fury.io/py/fastapi-users.svg)](https://badge.fury.io/py/fastapi-users)
 [![Downloads](https://pepy.tech/badge/fastapi-users)](https://pepy.tech/project/fastapi-users)
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-77-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Не удаляйте и не изменяйте этот раздел -->
+[![Все участники](https://img.shields.io/badge/all_contributors-77-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <p align="center">
-<a href="https://github.com/sponsors/frankie567"><img src="https://md-buttons.francoisvoron.com/button.svg?text=Buy%20me%20a%20coffee%20%E2%98%95%EF%B8%8F&bg=ef4444&w=200&h=50"></a>
+<a href="https://github.com/sponsors/frankie567"><img src="https://md-buttons.francoisvoron.com/button.svg?text=Поддержать автора ☕%EF%B8%8F&bg=ef4444&w=200&h=50"></a>
 </p>
 
 ---
 
-**Documentation**: <a href="https://fastapi-users.github.io/fastapi-users/" target="_blank">https://fastapi-users.github.io/fastapi-users/</a>
+**Документация**: <a href="https://fastapi-users.github.io/fastapi-users/" target="_blank">https://fastapi-users.github.io/fastapi-users/</a>
 
-**Source Code**: <a href="https://github.com/fastapi-users/fastapi-users" target="_blank">https://github.com/fastapi-users/fastapi-users</a>
+**Исходный код**: <a href="https://github.com/fastapi-users/fastapi-users" target="_blank">https://github.com/fastapi-users/fastapi-users</a>
 
 ---
 
-Add quickly a registration and authentication system to your [FastAPI](https://fastapi.tiangolo.com/) project. **FastAPI Users** is designed to be as customizable and adaptable as possible.
+Быстро добавьте систему регистрации и аутентификации в ваш проект [FastAPI](https://fastapi.tiangolo.com/). **FastAPI Users** создан с учетом возможности максимальной настройки и адаптации к вашим нуждам.
 
-## Features
+## Особенности
 
-* [X] Extensible base user model
-* [X] Ready-to-use register, login, reset password and verify e-mail routes
-* [X] Ready-to-use social OAuth2 login flow
-* [X] Dependency callables to inject current user in route
-* [X] Pluggable password validation
-* [X] Customizable database backend
-    * [X] [SQLAlchemy ORM async](https://docs.sqlalchemy.org/en/14/orm/extensions/asyncio.html) included
-    * [X] [MongoDB with Beanie ODM](https://github.com/roman-right/beanie/) included
-* [X] Multiple customizable authentication backends
-    * [X] Transports: Authorization header, Cookie
-    * [X] Strategies: JWT, Database, Redis
-* [X] Full OpenAPI schema support, even with several authentication backends
+* [X] Расширяемая базовая модель пользователя
+* [X] Готовые к использованию маршруты для регистрации, входа, сброса пароля и верификации электронной почты
+* [X] Готовый к использованию поток социальной аутентификации OAuth2
+* [X] Вызываемые зависимости для внедрения текущего пользователя в маршрут
+* [X] Подключаемая проверка пароля
+* [X] Настраиваемая база данных
+    * [X] Включен асинхронный SQLAlchemy ORM (https://docs.sqlalchemy.org/en/14/orm/extensions/asyncio.html)
+    * [X] Включен MongoDB с использованием Beanie ODM (https://github.com/roman-right/beanie/)
+* [X] Несколько настраиваемых механизмов аутентификации
+    * [X] Транспорты: заголовок авторизации, Cookie
+    * [X] Стратегии: JWT, база данных, Redis
+* [X] Полная поддержка схемы OpenAPI, даже с несколькими механизмами аутентификации
 
-## In a hurry? Discover Fief, the open-source authentication platform
+## В спешке? Ознакомьтесь с Fief, платформой аутентификации с открытым исходным кодом
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/fief-dev/.github/main/logos/logo-full-red.svg?sanitize=true" alt="Fief" width="256" style="width: 256px">
@@ -53,24 +53,24 @@ Add quickly a registration and authentication system to your [FastAPI](https://f
 
 <img src="https://www.fief.dev/illustrations/guard-right.svg" alt="Fief" height="300" align="right" style="height: 300px">
 
-**Implementing registration, login, social auth is hard and painful. We know it. With our highly secure and open-source users management platform, you can focus on your app while staying in control of your users data.**
+**Внедрение системы регистрации, входа и социальной аутентификации может быть сложным и трудоемким процессом. Мы это понимаем. С нашей высокоэффективной и платформой управления пользователями с открытым исходным кодом вы можете сосредоточиться на создании своего приложения, оставаясь при этом в полном контроле данных пользователей.**
 
-* Based on **FastAPI Users**!
-* **Open-source**: self-host it for free or use our hosted version
-* **Bring your own database**: host your database anywhere, we'll take care of the rest
-* **Pre-built login and registration pages**: clean and fast authentication so you don't have to do it yourself
-* **Official Python client** with built-in **FastAPI integration**
+* Основано на **FastAPI Users**!
+* **Открытый исходный код**: разверните его самостоятельно бесплатно или используйте наш вариант с хостингом
+* **Ваша база данных**: размещайте базу данных где угодно, а мы позаботимся об остальном
+* **Готовые страницы входа и регистрации**: чистая и быстрая аутентификация, чтобы вам не пришлось это делать самостоятельно
+* **Официальный клиент на Python** с встроенной **интеграцией FastAPI**
 
 <br clear="right"/>
 
 <p align="center">
-    <a href="https://www.fief.dev"><img src="https://md-buttons.francoisvoron.com/button.svg?text=Join%20the%20beta&bg=f43f5e&w=150&px=30" /></a>
+    <a href="https://www.fief.dev"><img src="https://md-buttons.francoisvoron.com/button.svg?text=Присоединяйтесь к бета-тестированию&bg=f43f5e&w=150&px=30" /></a>
 </p>
-<p align="center">It's free!</p>
+<p align="center">Бесплатно!</p>
 
-## Contributors and sponsors ✨☕️
+## Участники и спонсоры ✨☕️
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Благодарим этих замечательных людей ([ключ к эмодзи](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -179,45 +179,40 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tbody>
 </table>
 
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
+Этот проект следует спецификации [all-contributors](https://github.com/all-contributors/all-contributors). Приветствуются вклады любого рода!
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+## Разработка
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+### Настройка окружения
 
-## Development
+Мы используем [Hatch](https://hatch.pypa.io/latest/install/) для управления окружением разработки и сборкой продукта. Убедитесь, что он установлен в вашей системе.
 
-### Setup environment
+### Запуск юнит-тестов
 
-We use [Hatch](https://hatch.pypa.io/latest/install/) to manage the development environment and production build. Ensure it's installed on your system.
-
-### Run unit tests
-
-You can run all the tests with:
+Вы можете запустить все тесты с помощью следующей команды:
 
 ```bash
 hatch run test
 ```
 
-### Format the code
+### Форматирование кода
 
-Execute the following command to apply `isort` and `black` formatting:
+Выполните следующую команду для применения форматирования с использованием `isort` и `black`:
 
 ```bash
 hatch run lint
 ```
 
-### Serve the documentation
+### Запуск документации
 
-You can serve the documentation locally with the following command:
+Вы можете локально запустить документацию следующей командой:
 
 ```bash
 hatch run docs
 ```
 
-The documentation will be available on [http://localhost:8000](http://localhost:8000).
+Документация будет доступна по адресу [http://localhost:8000](http://localhost:8000).
 
-## License
+## Лицензия
 
-This project is licensed under the terms of the MIT license.
+Этот проект лицензирован в соответствии с условиями лицензии MIT.

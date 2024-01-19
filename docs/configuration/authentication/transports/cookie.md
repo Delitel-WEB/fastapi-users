@@ -1,8 +1,8 @@
 # Cookie
 
-Cookies are an easy way to store stateful information into the user browser. Thus, it is more useful for browser-based navigation (e.g. a front-end app making API requests) rather than pure API interaction.
+Cookies - это простой способ сохранения состояния в браузере пользователя. Таким образом, это более удобно для навигации с использованием браузера (например, веб-приложение, выполняющее запросы к API), а не для чистого взаимодействия с API.
 
-## Configuration
+## Конфигурация
 
 ```py
 from fastapi_users.authentication import CookieTransport
@@ -10,32 +10,32 @@ from fastapi_users.authentication import CookieTransport
 cookie_transport = CookieTransport(cookie_max_age=3600)
 ```
 
-As you can see, instantiation is quite simple. It accepts the following arguments:
+Как видите, создание экземпляра довольно просто. Он принимает следующие аргументы:
 
-* `cookie_name` (`fastapiusersauth`): Name of the cookie.
-* `cookie_max_age` (`Optional[int]`): The lifetime of the cookie in seconds. `None` by default, which means it's a session cookie.
-* `cookie_path` (`/`): Cookie path.
-* `cookie_domain` (`None`): Cookie domain.
-* `cookie_secure` (`True`): Whether to only send the cookie to the server via SSL request.
-* `cookie_httponly` (`True`): Whether to prevent access to the cookie via JavaScript.
-* `cookie_samesite` (`lax`): A string that specifies the samesite strategy for the cookie. Valid values are `lax`, `strict` and `none`. Defaults to `lax`.
+* `cookie_name` (`fastapiusersauth`): Имя куки.
+* `cookie_max_age` (`Optional[int]`): Срок действия куки в секундах. По умолчанию `None`, что означает, что это кука сеанса.
+* `cookie_path` (`/`): Путь куки.
+* `cookie_domain` (`None`): Домен куки.
+* `cookie_secure` (`True`): Отправлять ли куки на сервер только через SSL-запрос.
+* `cookie_httponly` (`True`): Запретить ли доступ к куке через JavaScript.
+* `cookie_samesite` (`lax`): Стратегия SameSite для куки. Допустимые значения: `lax`, `strict` и `none`. По умолчанию `lax`.
 
-## Login
+## Вход в систему
 
-This method will return a response with a valid `set-cookie` header upon successful login:
+Этот метод вернет ответ с действительным заголовком `set-cookie` при успешном входе в систему:
 
 !!! success "`200 OK`"
 
-> Check documentation about [login route](../../../usage/routes.md#post-login).
+> Проверьте документацию о [маршруте входа в систему](../../../usage/routes.md#post-login).
 
-## Logout
+## Выход из системы
 
-This method will remove the authentication cookie:
+Этот метод удалит аутентификационную куку:
 
 !!! success "`204 No content`"
 
-> Check documentation about [logout route](../../../usage/routes.md#post-logout).
+> Проверьте документацию о [маршруте выхода из системы](../../../usage/routes.md#post-logout).
 
-## Authentication
+## Аутентификация
 
-This method expects that you provide a valid cookie in the headers.
+Этот метод ожидает, что вы предоставите действительную куку в заголовках.

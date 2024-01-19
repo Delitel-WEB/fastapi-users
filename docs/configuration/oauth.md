@@ -1,24 +1,26 @@
 # OAuth2
 
-FastAPI Users provides an optional OAuth2 authentication support. It relies on [HTTPX OAuth library](https://frankie567.github.io/httpx-oauth/), which is a pure-async implementation of OAuth2.
+FastAPI Users предоставляет дополнительную поддержку аутентификации OAuth2. Он зависит от [библиотеки OAuth HTTPX](https://frankie567.github.io/httpx-oauth/), которая представляет собой чистую асинхронную реализацию OAuth2.
 
-## Installation
+## Установка
 
-You should install the library with the optional dependencies for OAuth:
+Вы должны установить библиотеку с дополнительными зависимостями для OAuth:
 
 ```sh
 pip install 'fastapi-users[sqlalchemy,oauth]'
 ```
 
+или
+
 ```sh
 pip install 'fastapi-users[beanie,oauth]'
 ```
 
-## Configuration
+## Настройка
 
-### Instantiate an OAuth2 client
+### Создание экземпляра клиента OAuth2
 
-You first need to get an HTTPX OAuth client instance. [Read the documentation](https://frankie567.github.io/httpx-oauth/oauth2/) for more information.
+Сначала вам нужно получить экземпляр клиента HTTPX OAuth. [Прочтите документацию](https://frankie567.github.io/httpx-oauth/oauth2/) для получения дополнительной информации.
 
 ```py
 from httpx_oauth.clients.google import GoogleOAuth2
@@ -26,22 +28,22 @@ from httpx_oauth.clients.google import GoogleOAuth2
 google_oauth_client = GoogleOAuth2("CLIENT_ID", "CLIENT_SECRET")
 ```
 
-### Setup the database adapter
+### Настройка адаптера базы данных
 
 #### SQLAlchemy
 
-You'll need to define the SQLAlchemy model for storing OAuth accounts. We provide a base one for this:
+Вам нужно определить модель SQLAlchemy для хранения учетных записей OAuth. Мы предоставляем базовую модель для этого:
 
 ```py hl_lines="5 19-20 24-26 43-44"
 --8<-- "docs/src/db_sqlalchemy_oauth.py"
 ```
 
-Notice that we also manually added a `relationship` on `User` so that SQLAlchemy can properly retrieve the OAuth accounts of the user.
+Обратите внимание, что мы также вручную добавили `relationship` на `User`, чтобы SQLAlchemy мог правильно извлекать учетные записи OAuth пользователя.
 
-Besides, when instantiating the database adapter, we need pass this SQLAlchemy model as third argument.
+Кроме того, при создании адаптера базы данных нам нужно передать эту модель SQLAlchemy в качестве третьего аргумента.
 
-!!! tip "Primary key is defined as UUID"
-    By default, we use UUID as a primary key ID for your user. If you want to use another type, like an auto-incremented integer, you can use `SQLAlchemyBaseOAuthAccountTable` as base class and define your own `id` and `user_id` column.
+!!! tip "Первичный ключ определен как UUID"
+    По умолчанию мы используем UUID в качестве первичного ключа ID для вашего пользователя. Если вы хотите использовать другой тип, например, автоматически увеличиваемое целое число, вы можете использовать `SQLAlchemyBaseOAuthAccountTable` в качестве базового класса и определить свой собственный столбец `id` и `user_id`.
 
     ```py
     class OAuthAccount(SQLAlchemyBaseOAuthAccountTable[int], Base):
@@ -53,21 +55,21 @@ Besides, when instantiating the database adapter, we need pass this SQLAlchemy m
 
     ```
 
-    Notice that `SQLAlchemyBaseOAuthAccountTable` expects a generic type to define the actual type of ID you use.
+    Обратите внимание, что `SQLAlchemyBaseOAuthAccountTable` ожидает обобщенный тип для определения фактического типа ID, который вы используете.
 
 #### Beanie
 
-The advantage of MongoDB is that you can easily embed sub-objects in a single document. That's why the configuration for Beanie is quite simple. All we need to do is to define another class to structure an OAuth account object.
+Преимущество MongoDB заключается в том, что вы легко можете встраивать подобъекты в один документ. Поэтому конфигурация для Beanie довольно проста. Все, что нам нужно сделать, это определить еще один класс для структурирования объекта учетной записи OAuth.
 
 ```py hl_lines="5 15-16 20"
 --8<-- "docs/src/db_beanie_oauth.py"
 ```
 
-It's worth to note that `OAuthAccount` is **not a Beanie document** but a Pydantic model that we'll embed inside the `User` document, through the `oauth_accounts` array.
+Стоит отметить, что `OAuthAccount` **не является документом Beanie**, а является моделью Pydantic, которую мы будем встраивать в документ `User` через массив `oauth_accounts`.
 
-### Generate routers
+### Создание маршрутов
 
-Once you have a `FastAPIUsers` instance, you can make it generate a single OAuth router for a given client **and** authentication backend.
+После создания экземпляра `FastAPIUsers` вы можете заставить его создать единственный маршрут OAuth для заданного клиента **и** бэкенда аутентификации.
 
 ```py
 app.include_router(
@@ -78,13 +80,13 @@ app.include_router(
 ```
 
 !!! tip
-    If you have several OAuth clients and/or several authentication backends, you'll need to create a router for each pair you want to support.
+    Если у вас есть несколько клиентов OAuth и/или несколько бэкендов аутентификации, вам нужно создать маршрут для каждой пары, которую вы хотите поддерживать.
 
-#### Existing account association
+#### Ассоциация существующей учетной записи
 
-If a user with the same e-mail address already exists, an HTTP 400 error will be raised by default.
+Если учетная запись с таким же адресом электронной почты уже существует, по умолчанию будет вызвана ошибка HTTP 400.
 
-You can however choose to automatically link this OAuth account to the existing user account by setting the `associate_by_email` flag:
+Однако вы можете выбрать автоматическую привязку этой учетной записи OAuth к существующей учетной записи пользователя, установив флаг `associate_by_email`:
 
 ```py
 app.include_router(
@@ -99,17 +101,19 @@ app.include_router(
 )
 ```
 
-Bear in mind though that it can lead to security breaches if the OAuth provider does not validate e-mail addresses. How?
+Тем не менее, следует помнить, что это может привести к нарушениям безопасности, если провайдер OAuth не проверяет адреса электронной почты. Как?
 
-* Let's say your app support an OAuth provider, *Merlinbook*, which does not validate e-mail addresses.
-* Imagine a user registers to your app with the e-mail address `lancelot@camelot.bt`.
-* Now, a malicious user creates an account on *Merlinbook* with the same e-mail address. Without e-mail validation, the malicious user can use this account without limitation.
-* The malicious user authenticates using *Merlinbook* OAuth on your app, which automatically associates to the existing `lancelot@camelot.bt`.
-* Now, the malicious user has full access to the user account on your app 😞
+* Допустим, ваше приложение поддерживает OAuth-провайдер *Merlinbook*, который не проверяет адреса электронной почты.
+* Представьте себе, что пользователь регистрируется в вашем приложении с адресом электронной почты `lancelot@camelot.bt`.
+* Теперь злонамеренный пользователь создает учетную запись в *Merlinbook* с тем же адресом электронной почты. Без проверки электронной почты злонамеренный пользователь может использовать эту учетную запись без ограничений.
+* Злонамеренный пользователь проходит аутентификацию с использованием OAuth *Merlinbook* в вашем приложении, которая автоматически ассоциируется с существующим `lancelot@camelot.bt`.
+* Теперь злонамеренный пользователь имеет полный доступ к учетной записи пользователя в ваш
 
-#### Association router for authenticated users
+ем приложении 😞
 
-We also provide a router to associate an already authenticated user with an OAuth account. After this association, the user will be able to authenticate with this OAuth provider.
+#### Маршрут ассоциации для аутентифицированных пользователей
+
+Мы также предоставляем маршрут для ассоциирования уже аутентифицированного пользователя с учетной записью OAuth. После этой ассоциации пользователь сможет аутентифицироваться с этим провайдером OAuth.
 
 ```py
 app.include_router(
@@ -119,16 +123,16 @@ app.include_router(
 )
 ```
 
-Notice that, just like for the [Users router](./routers/users.md), you have to pass the `UserRead` Pydantic schema.
+Обратите внимание, что, как и для [маршрута пользователей](./routers/users.md), вы должны передать схему Pydantic `UserRead`.
 
-#### Set `is_verified` to `True` by default
+#### Установка `is_verified` в `True` по умолчанию
 
-!!! tip "This section is only useful if you set up email verification"
-    You can read more about this feature [here](./routers/verify.md).
+!!! tip "Этот раздел полезен только при настройке проверки электронной почты"
+    Вы можете прочитать больше об этой функции [здесь](./routers/verify.md).
 
-When a new user registers with an OAuth provider, the `is_verified` flag is set to `False`, which requires the user to verify its email address.
+Когда новый пользователь регистрируется с провайдером OAuth, флаг `is_verified` устанавливается в `False`, что требует от пользователя подтверждения своего адреса электронной почты.
 
-You can choose to trust the email address given by the OAuth provider and set the `is_verified` flag to `True` after registration. You can do this by setting the `is_verified_by_default` argument:
+Вы можете выбрать доверять адресу электронной почты, предоставленному провайдером OAuth, и установить флаг `is_verified` в `True` после регистрации. Вы можете сделать это, установив аргумент `is_verified_by_default`:
 
 ```py
 app.include_router(
@@ -143,18 +147,17 @@ app.include_router(
 )
 ```
 
-!!! danger "Make sure you can trust the OAuth provider"
-    Make sure the OAuth provider you're using **does verify** the email address before enabling this flag.
+!!! danger "Убедитесь, что вы можете доверять провайдеру OAuth"
+    Убедитесь, что используемый вами провайдер OAuth **проверяет** адрес электронной почты, прежде чем включать этот флаг.
 
-### Full example
+### Полный пример
 
 !!! warning
-    Notice that **SECRET** should be changed to a strong passphrase.
-    Insecure passwords may give attackers full access to your database.
+    Обратите внимание, что **SECRET** должен быть изменен на надежную пароль. Небезопасные пароли могут предоставить злоумышленникам полный доступ к вашей базе данных.
 
 #### SQLAlchemy
 
-[Open :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/sqlalchemy-oauth)
+[Открыть :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/sqlalchemy-oauth)
 
 === "requirements.txt"
 
@@ -194,7 +197,7 @@ app.include_router(
 
 #### Beanie
 
-[Open :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/beanie-oauth)
+[Открыть :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/beanie-oauth)
 
 === "requirements.txt"
 

@@ -1,14 +1,14 @@
-# Password hash
+# Хеширование пароля
 
-By default, FastAPI Users will use the [BCrypt algorithm](https://en.wikipedia.org/wiki/Bcrypt) to **hash and salt** passwords before storing them in the database.
+По умолчанию FastAPI Users будет использовать [алгоритм BCrypt](https://en.wikipedia.org/wiki/Bcrypt) для **хеширования и соления** паролей перед сохранением их в базе данных.
 
-The implementation is provided by [Passlib](https://passlib.readthedocs.io/en/stable/index.html), a battle-tested Python library for password hashing.
+Реализация предоставляется [Passlib](https://passlib.readthedocs.io/en/stable/index.html), проверенной временем библиотекой на языке Python для хеширования паролей.
 
-## Customize `CryptContext`
+## Настройка `CryptContext`
 
-If you need to support other hashing algorithms, you can customize the [`CryptContext` object of Passlib](https://passlib.readthedocs.io/en/stable/lib/passlib.context.html#the-cryptcontext-class).
+Если вам нужна поддержка других алгоритмов хеширования, вы можете настроить [`CryptContext` объект из Passlib](https://passlib.readthedocs.io/en/stable/lib/passlib.context.html#the-cryptcontext-class).
 
-For this, you'll need to instantiate the `PasswordHelper` class and pass it your `CryptContext`. The example below shows you how you can create a `CryptContext` to add support for the Argon2 algorithm while deprecating BCrypt.
+Для этого вам нужно создать экземпляр класса `PasswordHelper` и передать ему ваш `CryptContext`. В приведенном ниже примере показано, как вы можете создать `CryptContext` для поддержки алгоритма Argon2 при устаревании BCrypt.
 
 ```py
 from fastapi_users.password import PasswordHelper
@@ -18,26 +18,26 @@ context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
 password_helper = PasswordHelper(context)
 ```
 
-Finally, pass the `password_helper` variable while instantiating your `UserManager`:
+Наконец, передайте переменную `password_helper` при создании вашего `UserManager`:
 
 ```py
 async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db, password_helper)
 ```
 
-!!! info "Password hashes are automatically upgraded"
-    FastAPI Users takes care of upgrading the password hash to a more recent algorithm when needed.
+!!! info "Хеши паролей автоматически обновляются"
+    FastAPI Users заботится о том, чтобы обновлять хеш пароля до более нового алгоритма при необходимости.
 
-    Typically, when a user logs in, we'll check if the password hash algorithm is deprecated.
+    Обычно, когда пользователь входит в систему, мы проверяем, устарел ли алгоритм хеша пароля.
 
-    If it is, we take the opportunity of having the password in plain-text at hand (since the user just logged in!) to hash it with a better algorithm and update it in database.
+    Если это так, мы воспользуемся возможностью иметь пароль в виде обычного текста (поскольку пользователь только что вошел в систему!), чтобы хешировать его с использованием более надежного алгоритма и обновить его в базе данных.
 
-!!! warning "Dependencies for alternative algorithms are not included by default"
-    FastAPI Users won't install required dependencies to make other algorithms like Argon2 work. It's up to you to install them.
+!!! warning "Зависимости для альтернативных алгоритмов не устанавливаются по умолчанию"
+    FastAPI Users не установит необходимые зависимости, чтобы сделать другие алгоритмы, такие как Argon2, работающими. Вам нужно установить их самостоятельно.
 
-## Full customization
+## Полная настройка
 
-If you don't wish to use Passlib at all – **which we don't recommend unless you're absolutely sure of what you're doing** — you can implement your own `PasswordHelper` class as long as it implements the `PasswordHelperProtocol` and its methods.
+Если вы не хотите использовать Passlib вообще – **что мы не рекомендуем, если вы не уверены в том, что делаете** — вы можете реализовать свой собственный класс `PasswordHelper`, при условии, что он реализует `PasswordHelperProtocol` и его методы.
 
 ```py
 from typing import Tuple

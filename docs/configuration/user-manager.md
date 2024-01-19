@@ -1,43 +1,43 @@
-# UserManager
+# Менеджер пользователей
 
-The `UserManager` class is the core logic of FastAPI Users. We provide the `BaseUserManager` class which you should extend to set some parameters and define logic, for example when a user just registered or forgot its password.
+Класс `UserManager` представляет собой основную логику FastAPI Users. Мы предоставляем класс `BaseUserManager`, который вам следует расширить для установки некоторых параметров и определения логики, например, когда пользователь только что зарегистрировался или забыл свой пароль.
 
-It's designed to be easily extensible and customizable so that you can integrate your very own logic.
+Он разработан с учетом легкости расширения и настройки, чтобы вы могли интегрировать свою собственную логику.
 
-## Create your `UserManager` class
+## Создайте свой класс `UserManager`
 
-You should define your own version of the `UserManager` class to set various parameters.
+Вам следует определить свою собственную версию класса `UserManager`, чтобы установить различные параметры.
 
 ```py hl_lines="12-27"
 --8<-- "docs/src/user_manager.py"
 ```
 
-As you can see, you have to define here various attributes and methods. You can find the complete list of those below.
+Как видите, здесь нужно определить различные атрибуты и методы. Полный список из них приведен ниже.
 
-!!! note "Typing: User and ID generic types are expected"
-    You can see that we define two generic types when extending the base class:
+!!! note "Типизация: Ожидаются обобщенные типы User и ID"
+    Вы видите, что мы определяем два обобщенных типа при расширении базового класса:
 
-    * `User`, which is the user model we defined in the database part
-    * The ID, which should correspond to the type of ID you use on your model. Here, we chose UUID, but it can be anything, like an integer or a MongoDB ObjectID.
+    * `User`, который является моделью пользователя, которую мы определили в части базы данных.
+    * ID, который должен соответствовать типу ID, используемому в вашей модели. Здесь мы выбрали UUID, но это может быть что угодно, например, целое число или MongoDB ObjectID.
 
-    It'll help you to have **good type-checking and auto-completion** when implementing the custom methods.
+    Это поможет вам получить **хорошую проверку типов и автозаполнение** при реализации собственных методов.
 
-### The ID parser mixin
+### Смешивание парсера ID
 
-Since the user ID is fully generic, we need a way to **parse it reliably when it'll come from API requests**, typically as URL path attributes.
+Поскольку ID пользователя является полностью обобщенным, нам нужен способ **надежно его разбирать, когда он будет поступать из запросов API**, обычно в виде атрибутов пути URL.
 
-That's why we added the `UUIDIDMixin` in the example above. It implements the `parse_id` method, ensuring UUID are valid and correctly parsed.
+Вот почему мы добавили `UUIDIDMixin` в приведенном выше примере. Он реализует метод `parse_id`, обеспечивая, что UUID действительны и правильно разбираются.
 
-Of course, it's important that this logic **matches the type of your ID**. To help you with this, we provide mixins for the most common cases:
+Конечно, важно, чтобы эта логика **соответствовала типу вашего ID**. Чтобы помочь вам с этим, мы предоставляем смешивания для наиболее распространенных случаев:
 
-* `UUIDIDMixin`, for UUID ID.
-* `IntegerIDMixin`, for integer ID.
-* `ObjectIDIDMixin` (provided by `fastapi_users_db_beanie`), for MongoDB ObjectID.
+* `UUIDIDMixin` для UUID ID.
+* `IntegerIDMixin` для целочисленного ID.
+* `ObjectIDIDMixin` (предоставляется `fastapi_users_db_beanie`) для MongoDB ObjectID.
 
-!!! tip "Inheritance order matters"
-    Notice in your example that **the mixin comes first in our `UserManager` inheritance**. Because of the Method-Resolution-Order (MRO) of Python, the left-most element takes precedence.
+!!! tip "Порядок наследования имеет значение"
+    Обратите внимание в вашем примере, что **смешивание идет первым в нашем наследовании `UserManager`**. Из-за порядка разрешения методов (MRO) Python, самый левый элемент имеет приоритет.
 
-If you need another type of ID, you can simply overload the `parse_id` method on your `UserManager` class:
+Если вам нужен другой тип ID, вы можете просто перегрузить метод `parse_id` в своем классе `UserManager`:
 
 ```py
 from fastapi_users import BaseUserManager, InvalidID
@@ -51,45 +51,47 @@ class UserManager(BaseUserManager[User, MyCustomID]):
             raise InvalidID() from e  # (1)!
 ```
 
-1. If the ID can't be parsed into the desired type, you'll need to raise an `InvalidID` exception.
+1. Если ID невозможно разобрать в желаемый тип, вам нужно вызвать исключение `InvalidID`.
 
-## Create `get_user_manager` dependency
+## Создание зависимости `get_user_manager`
 
-The `UserManager` class will be injected at runtime using a FastAPI dependency. This way, you can run it in a database session or swap it with a mock during testing.
+Класс `UserManager` будет внедрен во время выполнения с использованием зависимости FastAPI. Таким образом, вы можете выполнять его в сеансе базы данных или заменять его на заглушку во время тестирования.
 
 ```py hl_lines="30-31"
 --8<-- "docs/src/user_manager.py"
 ```
 
-Notice that we use the `get_user_db` dependency we defined earlier to inject the database instance.
+Обратите внимание, что мы используем зависимость `get_user_db`, которую мы определили ранее, для внедрения экземпляра базы данных.
 
-## Customize attributes and methods
+## Настройка атрибутов и методов
 
-### Attributes
+### Атрибуты
 
-* `reset_password_token_secret`: Secret to encode reset password token. **Use a strong passphrase and keep it secure.**
-* `reset_password_token_lifetime_seconds`: Lifetime of reset password token. Defaults to 3600.
-* `reset_password_token_audience`: JWT audience of reset password token. Defaults to `fastapi-users:reset`.
-* `verification_token_secret`: Secret to encode verification token. **Use a strong passphrase and keep it secure.**
-* `verification_token_lifetime_seconds`: Lifetime of verification token. Defaults to 3600.
-* `verification_token_audience`: JWT audience of verification token. Defaults to `fastapi-users:verify`.
+* `reset_password_token_secret`: Секрет для кодирования токена сброса пароля. **Используйте надежную фразу-пароль и держите ее в безопасности.**
+* `reset_password_token_lifetime_seconds`: Срок действия токена сброса пароля. По умолчанию 3600.
+* `reset_password_token_audience`: Аудитория JWT токена сброса пароля. По умолчанию `fastapi-users:reset`.
+* `verification_token_secret`: Секрет для кодирования токена подтверждения. **Используйте надежную фразу-пароль и держите ее в безопасности.**
+* `verification_token_lifetime_seconds`: Срок действия токена подтверждения. По умолчанию 3600.
+* `verification_token_audience`: Аудитория JWT токена подтверждения. По умолчанию `fastapi-users:verify`.
 
-### Methods
+### Методы
 
 #### `validate_password`
 
-Validate a password.
+Проверка пароля.
 
-**Arguments**
+**Аргументы**
 
-* `password` (`str`): the password to validate.
-* `user` (`Union[UserCreate, User]`): user model which we are currently validating the password. Useful if you want to check that the password doesn't contain the name or the birthdate of the user for example.
+* `password` (`str`): проверяемый пароль.
+* `user` (`Union[UserCreate, User]`): модель пользователя, для которой в настоящее время проверяется пароль. Полезно, если вы хотите проверить, что пароль не содержит имя или дату рождения пользователя, например.
 
-**Output**
+**
 
-This function should return `None` if the password is valid or raise `InvalidPasswordException` if not. This exception expects an argument `reason` telling why the password is invalid. It'll be part of the error response.
+Вывод**
 
-**Example**
+Эта функция должна вернуть `None`, если пароль допустим, или вызвать `InvalidPasswordException`, если нет. Это исключение ожидает аргумент `reason`, указывающий причину недопустимости пароля. Он будет частью ответа с ошибкой.
+
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, InvalidPasswordException, UUIDIDMixin
@@ -114,16 +116,16 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
 #### `on_after_register`
 
-Perform logic after successful user registration.
+Выполнение логики после успешной регистрации пользователя.
 
-Typically, you'll want to **send a welcome e-mail** or add it to your marketing analytics pipeline.
+Обычно вам захочется **отправить приветственное письмо** или добавить его в вашу аналитику маркетинга.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the registered user.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): зарегистрированный пользователь.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -137,17 +139,17 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
 #### `on_after_update`
 
-Perform logic after successful user update.
+Выполнение логики после успешного обновления пользователя.
 
-It may be useful, for example, if you wish to update your user in a data analytics or customer success platform.
+Это может быть полезно, например, если вы хотите обновить своего пользователя в аналитике данных или платформе успеха клиента.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the updated user.
-* `update_dict` (`Dict[str, Any]`): dictionary with the updated user fields.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): обновленный пользователь.
+* `update_dict` (`Dict[str, Any]`): словарь с обновленными полями пользователя.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -166,17 +168,17 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
 #### `on_after_login`
 
-Perform logic after a successful user login.
+Выполнение логики после успешного входа пользователя.
 
-It may be useful for custom logic or processes triggered by new logins, for example a daily login reward or for analytics.
+Это может быть полезно для пользовательской логики или процессов, запускаемых новыми входами, например, ежедневная награда за вход или для аналитики.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the updated user.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
-* `response` (`Optional[Response]`): Optional response built by the transport. Defaults to None.
+* `user` (`User`): обновленный пользователь.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
+* `response` (`Optional[Response]`): Необязательный ответ, созданный транспортом. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -195,17 +197,17 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
 #### `on_after_request_verify`
 
-Perform logic after successful verification request.
+Выполнение логики после успешного запроса на подтверждение.
 
-Typically, you'll want to **send an e-mail** with the link (and the token) that allows the user to verify their e-mail.
+Обычно вам захочется **отправить электронное письмо** со ссылкой (и токеном), который позволит пользователю подтвердить свой адрес электронной почты.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the user to verify.
-* `token` (`str`): the verification token.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): пользователь для подтверждения.
+* `token` (`str`): токен подтверждения.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -216,21 +218,21 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        print(f"Verification requested for user {user.id}. Verification token: {token}")
+        print(f"Запрос на подтверждение для пользователя {user.id}. Токен подтверждения: {token}")
 ```
 
 #### `on_after_verify`
 
-Perform logic after successful user verification.
+Выполнение логики после успешного подтверждения пользователя.
 
-This may be useful if you wish to send another e-mail or store this information in a data analytics or customer success platform.
+Это может быть полезно, если вы хотите отправить еще одно электронное письмо или сохранить эту информацию в аналитике данных или платформе успеха клиента.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the verified user.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): подтвержденный пользователь.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -241,22 +243,22 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def on_after_verify(
         self, user: User, request: Optional[Request] = None
     ):
-        print(f"User {user.id} has been verified")
+        print(f"Пользователь {user.id} был подтвержден")
 ```
 
 #### `on_after_forgot_password`
 
-Perform logic after successful forgot password request.
+Выполнение логики после успешного запроса сброса пароля.
 
-Typically, you'll want to **send an e-mail** with the link (and the token) that allows the user to reset their password.
+Обычно вам захочется **отправить электронное письмо** со ссылкой (и токеном), который позволяет пользователю сбросить свой пароль.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the user that forgot its password.
-* `token` (`str`): the forgot password token
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): пользователь, который забыл свой пароль.
+* `token` (`str`): токен сброса пароля.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -267,21 +269,21 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        print(f"User {user.id} has forgot their password. Reset token: {token}")
+        print(f"Пользователь {user.id} забыл свой пароль. Токен сброса: {token}")
 ```
 
 #### `on_after_reset_password`
 
-Perform logic after successful password reset.
+Выполнение логики после успешного сброса пароля.
 
-For example, you may want to **send an e-mail** to the concerned user to warn him that their password has been changed and that they should take action if they think they have been hacked.
+Например, вы можете **отправить электронное письмо** соответствующему пользователю, предупредив, что его пароль был изменен, и что он должен предпринять действия, если считает, что его аккаунт взломан.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the user that reset its password.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): пользователь, который сбросил свой пароль.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -290,22 +292,21 @@ from fastapi_users import BaseUserManager, UUIDIDMixin
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     # ...
     async def on_after_reset_password(self, user: User, request: Optional[Request] = None):
-        print(f"User {user.id} has reset their password.")
+        print(f"Пользователь {user.id} сбросил свой пароль.")
 ```
 
 #### `on_before_delete`
 
-Perform logic before user delete.
+Выполнение логики перед удалением пользователя.
 
-For example, you may want to **valide user resource integrity** to see if any related user resource need to be marked inactive, or delete
-them recursively.
+Например, вам может потребоваться **проверить целостность ресурсов пользователя**, чтобы увидеть, необходимо ли помечать как неактивные связанные с пользователем ресурсы или удалять их рекурсивно.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the user to be deleted.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): пользователь, который будет удален.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -314,21 +315,21 @@ from fastapi_users import BaseUserManager, UUIDIDMixin
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     # ...
     async def on_before_delete(self, user: User, request: Optional[Request] = None):
-        print(f"User {user.id} is going to be deleted")
+        print(f"Пользователь {user.id} собирается быть удален")
 ```
 
 #### `on_after_delete`
 
-Perform logic after user delete.
+Выполнение логики после удаления пользователя.
 
-For example, you may want to **send an email** to the administrator about the event.
+Например, вы можете захотеть **отправить электронное письмо** администратору о событии.
 
-**Arguments**
+**Аргументы**
 
-* `user` (`User`): the user to be deleted.
-* `request` (`Optional[Request]`): optional FastAPI request object that triggered the operation. Defaults to None.
+* `user` (`User`): пользователь, который будет удален.
+* `request` (`Optional[Request]`): необязательный объект запроса FastAPI, который вызвал операцию. По умолчанию None.
 
-**Example**
+**Пример**
 
 ```py
 from fastapi_users import BaseUserManager, UUIDIDMixin
@@ -337,5 +338,5 @@ from fastapi_users import BaseUserManager, UUIDIDMixin
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     # ...
     async def on_after_delete(self, user: User, request: Optional[Request] = None):
-        print(f"User {user.id} is successfully deleted")
+        print(f"Пользователь {user.id} успешно удален")
 ```

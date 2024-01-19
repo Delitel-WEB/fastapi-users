@@ -1,8 +1,8 @@
 # Bearer
 
-With this transport, the token is expected inside the `Authorization` header of the HTTP request with the `Bearer` scheme. It's particularly suited for pure API interaction or mobile apps.
+С этим транспортом ожидается, что токен будет внутри заголовка HTTP-запроса `Authorization` с схемой `Bearer`. Он особенно подходит для чистого взаимодействия с API или мобильных приложений.
 
-## Configuration
+## Конфигурация
 
 ```py
 from fastapi_users.authentication import BearerTransport
@@ -10,13 +10,13 @@ from fastapi_users.authentication import BearerTransport
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 ```
 
-As you can see, instantiation is quite simple. It accepts the following arguments:
+Как видите, создание экземпляра довольно просто. Он принимает следующие аргументы:
 
-* `tokenUrl` (`str`): The exact path of your login endpoint. It'll allow the interactive documentation to automatically discover it and get a working *Authorize* button. In most cases, you'll probably need a **relative** path, not absolute. You can read more details about this in the [FastAPI documentation](https://fastapi.tiangolo.com/tutorial/security/first-steps/#fastapis-oauth2passwordbearer).
+* `tokenUrl` (`str`): Точный путь вашего конечного точки входа. Это позволит интерактивной документации автоматически обнаруживать его и получать работающую кнопку *Authorize*. В большинстве случаев вам, вероятно, потребуется **относительный** путь, а не абсолютный. Подробности можно прочитать в [документации FastAPI](https://fastapi.tiangolo.com/tutorial/security/first-steps/#fastapis-oauth2passwordbearer).
 
-## Login
+## Вход в систему
 
-This method will return the in the following form upon successful login:
+Этот метод вернет следующую форму при успешном входе:
 
 !!! success "`200 OK`"
     ```json
@@ -26,15 +26,15 @@ This method will return the in the following form upon successful login:
     }
     ```
 
-> Check documentation about [login route](../../../usage/routes.md#post-login).
+> Проверьте документацию о [маршруте входа в систему](../../../usage/routes.md#post-login).
 
-## Logout
+## Выход из системы
 
 !!! success "`204 No content`"
 
-## Authentication
+## Аутентификация
 
-This method expects that you provide a `Bearer` authentication with a valid token corresponding to your strategy.
+Этот метод ожидает, что вы предоставите аутентификацию `Bearer` с действительным токеном, соответствующим вашей стратегии.
 
 ```bash
 curl http://localhost:9000/protected-route -H'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTIyMWZmYzktNjQwZi00MzcyLTg2ZDMtY2U2NDJjYmE1NjAzIiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTcxNTA0MTkzfQ.M10bjOe45I5Ncu_uXvOmVV8QxnL-nZfcH96U90JaocI'

@@ -1,42 +1,42 @@
-# Create a user programmatically
+# Создание пользователя программным способом
 
-Sometimes, you'll need to create a user programmatically in the code rather than passing by the REST API endpoint. To do this, we'll create a function that you can call from your code.
+Иногда вам может потребоваться создать пользователя программным способом в коде, а не использовать конечную точку REST API. Для этого мы создадим функцию, которую вы сможете вызывать из вашего кода.
 
-In this context, we are outside the dependency injection mechanism of FastAPI, so we have to take care of instantiating the [`UserManager` class](../configuration/user-manager.md) and all other dependent objects **manually**.
+В этом контексте мы находимся вне механизма внедрения зависимостей FastAPI, поэтому нам придется заботиться о создании [`класса UserManager`](../configuration/user-manager.md) и всех других зависимых объектов **вручную**.
 
-For this cookbook, we'll consider you are starting from the [SQLAlchemy full example](../configuration/full-example.md), but it'll be rather similar for other DBMS.
+В этом рецепте мы предполагаем, что вы начинаете с [полного примера SQLAlchemy](../configuration/full-example.md), но подход будет довольно схож и для других СУБД.
 
-## 1. Define dependencies as context managers
+## 1. Определение зависимостей как контекстных менеджеров
 
-Generally, FastAPI dependencies are defined as **generators**, using the `yield` keyword. FastAPI knows very well to handle them inside its dependency injection system. For example, here is the definition of the `get_user_manager` dependency:
+Обычно зависимости FastAPI определяются как **генераторы**, используя ключевое слово `yield`. FastAPI отлично умеет обращаться с ними внутри своей системы внедрения зависимостей. Вот пример определения зависимости `get_user_manager`:
 
 ```py
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
   yield UserManager(user_db)
 ```
 
-In Python, when we want to use a generator, we have to use a `for` loop, which would be a bit unnatural in this context since we have only one value to get, the user manager instance. To avoid this, we'll transform them into **context managers**, so we can call them using the `with..as` syntax. Fortunately, the standard library provides tools to automatically transform generators into context managers.
+В Python, когда мы хотим использовать генератор, мы должны использовать цикл `for`, что было бы немного неестественным в этом контексте, поскольку у нас есть всего одно значение, которое нужно получить - экземпляр менеджера пользователя. Чтобы избежать этого, мы преобразуем их в **контекстные менеджеры**, чтобы мы могли вызывать их, используя синтаксис `with..as`. К счастью, стандартная библиотека предоставляет инструменты для автоматического преобразования генераторов в контекстные менеджеры.
 
-In the following sample, we import our dependencies and create a context manager version using `contextlib.asynccontextmanager`:
+В следующем примере мы импортируем наши зависимости и создаем их версию в виде контекстного менеджера с использованием `contextlib.asynccontextmanager`:
 
-```py hl_lines="8-10"
+```py
 --8<-- "docs/src/cookbook_create_user_programmatically.py"
 ```
 
-!!! info "I have other dependencies"
-    Since FastAPI Users fully embraces dependency injection, you may have more arguments passed to your database or user manager dependencies. It's important then to not forget anyone. Once again, outside the dependency injection system, you are responsible of instantiating **everything** yourself.
+!!! info "У меня есть другие зависимости"
+    Поскольку FastAPI Users полностью поддерживает внедрение зависимостей, у вас может быть больше аргументов, передаваемых в ваши зависимости базы данных или менеджера пользователей. Тогда важно не забыть ни одного. Еще раз подчеркиваем, что вне системы внедрения зависимостей вы сами отвечаете за создание **всего**.
 
-## 2. Write a function
+## 2. Написание функции
 
-We are now ready to write a function. The example below shows you a basic example but you can of course adapt it to your own needs. The key part here is once again to **take care of opening every context managers and pass them every required arguments**, as the dependency manager would do.
+Теперь мы готовы написать функцию. Приведенный ниже пример показывает вам базовый вариант, но вы, конечно же, можете адаптировать его под свои нужды. Основная часть здесь, как и раньше, состоит в том, чтобы **заботиться о создании каждого контекстного менеджера и передаче им необходимых аргументов**, как бы это делал менеджер зависимостей.
 
-```py hl_lines="13-25"
+```py
 --8<-- "docs/src/cookbook_create_user_programmatically.py"
 ```
 
-## 3. Use it
+## 3. Использование
 
-You can now easily use it in a script. For example:
+Теперь вы легко можете использовать это в скрипте. Например:
 
 ```py
 import asyncio

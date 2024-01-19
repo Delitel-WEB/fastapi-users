@@ -1,8 +1,8 @@
 # JWT
 
-[JSON Web Token (JWT)](https://jwt.io/introduction) is an internet standard for creating access tokens based on JSON. They don't need to be stored in a database: the data is self-contained inside and cryptographically signed.
+[JSON Web Token (JWT)](https://jwt.io/introduction) - это стандарт интернета для создания токенов доступа на основе JSON. Их не нужно хранить в базе данных: данные находятся внутри токена и криптографически подписаны.
 
-## Configuration
+## Конфигурация
 
 ```py
 from fastapi_users.authentication import JWTStrategy
@@ -13,30 +13,30 @@ def get_jwt_strategy() -> JWTStrategy:
     return JWTStrategy(secret=SECRET, lifetime_seconds=3600)
 ```
 
-As you can see, instantiation is quite simple. It accepts the following arguments:
+Как видите, создание экземпляра довольно просто. Он принимает следующие аргументы:
 
-- `secret` (`Union[str, pydantic.SecretStr]`): A constant secret which is used to encode the token. **Use a strong passphrase and keep it secure.**
-- `lifetime_seconds` (`Optional[int]`): The lifetime of the token in seconds. Can be set to `None` but in this case the token will be valid **forever**; which may raise serious security concerns.
-- `token_audience` (`Optional[List[str]]`): A list of valid audiences for the JWT token. Defaults to `["fastapi-users:auth"]`.
-- `algorithm` (`Optional[str]`): The JWT encryption algorithm. See [RFC 7519, section 8](https://datatracker.ietf.org/doc/html/rfc7519#section-8). Defaults to `"HS256"`.
-- `public_key` (`Optional[Union[str, pydantic.SecretStr]]`): If the JWT encryption algorithm requires a key pair instead of a simple secret, the key to **decrypt** the JWT may be provided here. The `secret` parameter will always be used to **encrypt** the JWT.
+- `secret` (`Union[str, pydantic.SecretStr]`): Постоянный секрет, используемый для кодирования токена. **Используйте надежную фразу и храните ее в безопасности.**
+- `lifetime_seconds` (`Optional[int]`): Срок действия токена в секундах. Может быть установлен в `None`, но в этом случае токен будет действителен **вечно**; что может вызвать серьезные проблемы безопасности.
+- `token_audience` (`Optional[List[str]]`): Список допустимых аудиторий для токена JWT. По умолчанию `["fastapi-users:auth"]`.
+- `algorithm` (`Optional[str]`): Алгоритм шифрования JWT. См. [RFC 7519, раздел 8](https://datatracker.ietf.org/doc/html/rfc7519#section-8). По умолчанию `"HS256"`.
+- `public_key` (`Optional[Union[str, pydantic.SecretStr]]`): Если алгоритм шифрования JWT требует пару ключей вместо простого секрета, здесь можно предоставить ключ для **дешифровки** JWT. Параметр `secret` всегда будет использоваться для **шифрования** JWT.
 
-!!! tip "Why it's inside a function?"
-    To allow strategies to be instantiated dynamically with other dependencies, they have to be provided as a callable to the authentication backend.
+!!! tip "Почему это внутри функции?"
+    Чтобы стратегии можно было создавать динамически с другими зависимостями, они должны предоставляться как вызываемые функции для аутентификационного бэкенда.
 
-    For `JWTStrategy`, since it doesn't require dependencies, it can be as simple as the function above.
+    Для `JWTStrategy`, поскольку она не требует зависимостей, функция может быть настолько простой, как указано выше.
 
-## RS256 example
+## Пример с RS256
 
 ```py
 from fastapi_users.authentication import JWTStrategy
 
 PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
-# Your RSA public key in PEM format goes here
+# Ваш открытый ключ RSA в формате PEM здесь
 -----END PUBLIC KEY-----"""
 
 PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
-# Your RSA private key in PEM format goes here
+# Ваш закрытый ключ RSA в формате PEM здесь
 -----END RSA PRIVATE KEY-----"""
 
 def get_jwt_strategy() -> JWTStrategy:
@@ -48,6 +48,6 @@ def get_jwt_strategy() -> JWTStrategy:
     )
 ```
 
-## Logout
+## Выход из системы
 
-On logout, this strategy **won't do anything**. Indeed, a JWT can't be invalidated on the server-side: it's valid until it expires.
+При выходе из системы эта стратегия **ничего не сделает**. Действительно, JWT не может быть аннулирован на стороне сервера: он действителен до истечения срока его действия.

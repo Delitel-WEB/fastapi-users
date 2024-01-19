@@ -1,7 +1,6 @@
-# Overview
+# Обзор
 
-The schema below shows you how the library is structured and how each part fit together.
-
+Схема ниже показывает структуру библиотеки и взаимодействие ее частей.
 
 ```mermaid
 flowchart TB
@@ -16,11 +15,11 @@ flowchart TB
         USER_CREATE[UserCreate]
         USER_UPDATE[UserUpdate]
     end
-    subgraph DATABASE[Database adapters]
+    subgraph DATABASE[Адаптеры базы данных]
         SQLALCHEMY[SQLAlchemy]
         BEANIE[Beanie]
     end
-    subgraph ROUTERS[Routers]
+    subgraph ROUTERS[Маршруты]
         AUTH[[get_auth_router]]
         OAUTH[[get_oauth_router]]
         OAUTH_ASSOCIATE[[get_oauth_associate_router]]
@@ -29,12 +28,12 @@ flowchart TB
         RESET[[get_reset_password_router]]
         USERS[[get_users_router]]
     end
-    subgraph AUTH_BACKENDS[Authentication]
-        subgraph TRANSPORTS[Transports]
+    subgraph AUTH_BACKENDS[Аутентификация]
+        subgraph TRANSPORTS[Транспорты]
             COOKIE[CookieTransport]
             BEARER[BearerTransport]
         end
-        subgraph STRATEGIES[Strategies]
+        subgraph STRATEGIES[Стратегии]
             DB[DatabaseStrategy]
             JWT[JWTStrategy]
             REDIS[RedisStrategy]
@@ -61,38 +60,38 @@ flowchart TB
     SCHEMAS --> ROUTERS
 ```
 
-## User model and database adapters
+## Модель пользователя и адаптеры базы данных
 
-FastAPI Users is compatible with various **databases and ORM**. To build the interface between those database tools and the library, we provide database adapters classes that you need to instantiate and configure.
+FastAPI Users совместим с различными **базами данных и ORM**. Чтобы построить интерфейс между этими средствами базы данных и библиотекой, мы предоставляем классы адаптеров базы данных, которые вам нужно создать и настроить.
 
-➡️ [I'm using SQLAlchemy](databases/sqlalchemy.md)
+➡️ [Я использую SQLAlchemy](databases/sqlalchemy.md)
 
-➡️ [I'm using Beanie](databases/beanie.md)
+➡️ [Я использую Beanie](databases/beanie.md)
 
-## Authentication backends
+## Аутентификационные бэкенды
 
-Authentication backends define the way users sessions are managed in your app, like access tokens or cookies.
+Аутентификационные бэкенды определяют способ управления сеансами пользователей в вашем приложении, такими как токены доступа или куки.
 
-They are composed of two parts: a **transport**, which is how the token will be carried over the requests (e.g. cookies, headers...) and a **strategy**, which is how the token will be generated and secured (e.g. a JWT, a token in database...).
+Они состоят из двух частей: **транспорта**, который определяет, как токен будет передаваться в запросах (например, в куках, заголовках...) и **стратегии**, которая определяет, как токен будет создаваться и обеспечиваться (например, JWT, токен в базе данных...).
 
-➡️ [Configure the authentication backends](./authentication/index.md)
+➡️ [Настройка аутентификационных бэкендов](./authentication/index.md)
 
 ## `UserManager`
 
-The `UserManager` object bears most of the logic of FastAPI Users: registration, verification, password reset... We provide a `BaseUserManager` with this common logic; which you should overload to define how to validate passwords or handle events.
+Объект `UserManager` несет основную логику FastAPI Users: регистрация, верификация, сброс пароля и т. д. Мы предоставляем `BaseUserManager` с этой общей логикой, которую вы должны перегрузить, чтобы определить, как проверять пароли или обрабатывать события.
 
-This `UserManager` object should be provided through a FastAPI dependency, `get_user_manager`.
+Этот объект `UserManager` должен предоставляться через зависимость FastAPI, `get_user_manager`.
 
-➡️ [Configure `UserManager`](./user-manager.md)
+➡️ [Настройка `UserManager`](./user-manager.md)
 
-## Schemas
+## Схемы
 
-FastAPI is heavily using [Pydantic models](https://pydantic-docs.helpmanual.io/) to validate request payloads and serialize responses. **FastAPI Users** is no exception and will expect you to provide Pydantic schemas representing a user when it's read, created and updated.
+FastAPI широко использует [модели Pydantic](https://pydantic-docs.helpmanual.io/) для проверки данных запросов и сериализации ответов. **FastAPI Users** не является исключением и ожидает, что вы предоставите модели Pydantic, представляющие пользователя при его чтении, создании и обновлении.
 
-➡️ [Configure schemas](./schemas.md)
+➡️ [Настройка схем](./schemas.md)
 
-## `FastAPIUsers` and routers
+## `FastAPIUsers` и маршруты
 
-Finally, `FastAPIUsers` object is the main class from which you'll be able to generate routers for classic routes like registration or login, but also get the `current_user` dependency factory to inject the authenticated user in your own routes.
+Наконец, объект `FastAPIUsers` является основным классом, из которого вы сможете создавать маршруты для классических запросов, таких как регистрация или вход, а также получать фабрику зависимостей `current_user`, чтобы внедрять аутентифицированного пользователя в свои собственные маршруты.
 
-➡️ [Configure `FastAPIUsers` and routers](./routers/index.md)
+➡️ [Настройка `FastAPIUsers` и маршрутов](./routers/index.md)

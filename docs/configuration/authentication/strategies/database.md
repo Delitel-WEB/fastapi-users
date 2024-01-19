@@ -1,38 +1,37 @@
-# Database
+# База данных
 
-The most natural way for storing tokens is of course the very same database you're using for your application. In this strategy, we set up a table (or collection) for storing those tokens with the associated user id. On each request, we try to retrive this token from the database to get the corresponding user id.
+Самый естественный способ хранения токенов, конечно же, это использование той же самой базы данных, которую вы используете для своего приложения. В этой стратегии мы создаем таблицу (или коллекцию) для хранения этих токенов с соответствующим идентификатором пользователя. При каждом запросе мы пытаемся извлечь этот токен из базы данных, чтобы получить соответствующий идентификатор пользователя.
 
-## Configuration
+## Конфигурация
 
-The configuration of this strategy is a bit more complex than the others as it requires you to configure models and a database adapter, [exactly like we did for users](../../overview.md#user-model-and-database-adapters).
+Конфигурация этой стратегии немного сложнее, чем у других, так как она требует настройки моделей и адаптера базы данных, [в точности так же, как мы делали для пользователей](../../overview.md#user-model-and-database-adapters).
 
+### Адаптеры базы данных
 
-### Database adapters
+Токен доступа будет структурирован следующим образом в вашей базе данных:
 
-An access token will be structured like this in your database:
+* `token` (`str`) – Уникальный идентификатор токена. Он генерируется автоматически при входе в систему с использованием этой стратегии.
+* `user_id` (`ID`) – Идентификатор пользователя, связанного с этим токеном.
+* `created_at` (`datetime`) – Дата и время создания токена. Используется для определения, истек ли срок действия токена или нет.
 
-* `token` (`str`) – Unique identifier of the token. It's generated automatically upon login by the strategy.
-* `user_id` (`ID`) – User id. of the user associated to this token.
-* `created_at` (`datetime`) – Date and time of creation of the token. It's used to determine if the token is expired or not.
-
-We are providing a base model with those fields for each database we are supporting.
+Мы предоставляем базовую модель с этими полями для каждой базы данных, которую мы поддерживаем.
 
 #### SQLAlchemy
 
-We'll expand from the basic SQLAlchemy configuration.
+Мы расширим базовую конфигурацию SQLAlchemy.
 
 ```py hl_lines="5-8 23-24 45-48"
 --8<-- "docs/src/db_sqlalchemy_access_tokens.py"
 ```
 
-1. We define an `AccessToken` ORM model inheriting from `SQLAlchemyBaseAccessTokenTableUUID`.
+1. Мы определяем модель `AccessToken` ORM, унаследованную от `SQLAlchemyBaseAccessTokenTableUUID`.
 
-2. We define a dependency to instantiate the `SQLAlchemyAccessTokenDatabase` class. Just like the user database adapter, it expects a fresh SQLAlchemy session and the `AccessToken` model class we defined above.
+2. Мы определяем зависимость для создания экземпляра класса `SQLAlchemyAccessTokenDatabase`. Как и адаптер базы данных пользователя, он ожидает свежую сессию SQLAlchemy и класс модели `AccessToken`, который мы определили выше.
 
-!!! tip "`user_id` foreign key is defined as UUID"
-    By default, we use UUID as a primary key ID for your user, so we follow the same convention to define the foreign key pointing to the user.
+!!! tip "Внешний ключ `user_id` определен как UUID"
+    По умолчанию мы используем UUID в качестве первичного ключа ID для вашего пользователя, поэтому мы следуем тому же соглашению при определении внешнего ключа, указывающего на пользователя.
 
-    If you want to use another type, like an auto-incremented integer, you can use `SQLAlchemyBaseAccessTokenTable` as base class and define your own `user_id` column.
+    Если вы хотите использовать другой тип, например, автоматически увеличиваемое целое число, вы можете использовать `SQLAlchemyBaseAccessTokenTable` в качестве базового класса и определить свой собственный столбец `user_id`.
 
     ```py
     class AccessToken(SQLAlchemyBaseAccessTokenTable[int], Base):
@@ -41,26 +40,26 @@ We'll expand from the basic SQLAlchemy configuration.
             return mapped_column(Integer, ForeignKey("user.id", ondelete="cascade"), nullable=False)
     ```
 
-    Notice that `SQLAlchemyBaseAccessTokenTable` expects a generic type to define the actual type of ID you use.
+    Обратите внимание, что `SQLAlchemyBaseAccessTokenTable` ожидает обобщенный тип, чтобы определить фактический тип ID, который вы используете.
 
 #### Beanie
 
-We'll expand from the basic Beanie configuration.
+Мы расширим базовую конфигурацию Beanie.
 
 ```py hl_lines="4-7 20-21 28-29"
 --8<-- "docs/src/db_beanie_access_tokens.py"
 ```
 
-1. We define an `AccessToken` ODM model inheriting from `BeanieBaseAccessToken`. Notice that we set a generic type to define the type of the `user_id` reference. By default, it's a standard MongoDB ObjectID.
+1. Мы определяем модель `AccessToken` ODM, унаследованную от `BeanieBaseAccessToken`. Обратите внимание, что мы устанавливаем обобщенный тип для определения типа ссылки `user_id`. По умолчанию это стандартный ObjectID MongoDB.
 
-2. We define a dependency to instantiate the `BeanieAccessTokenDatabase` class. Just like the user database adapter, it expects the `AccessToken` model class we defined above.
+2. Мы определяем зависимость для создания экземпляра класса `BeanieAccessTokenDatabase`. Как и адаптер базы данных пользователя, он ожидает класс модели `AccessToken`, который мы определили выше.
 
-Don't forget to add the `AccessToken` ODM model to the `document_models` array in your Beanie initialization, [just like you did with the `User` model](../../databases/beanie.md#initialize-beanie)!
+Не забудьте добавить модель `AccessToken` ODM в массив `document_models` при инициализации Beanie, [как вы это сделали с моделью `User`](../../databases/beanie.md#initialize-beanie)!
 
 !!! info
-    If you want to add your own custom settings to your `AccessToken` document model - like changing the collection name - don't forget to let your inner `Settings` class inherit the pre-defined settings from `BeanieBaseAccessToken` like this: `Settings(BeanieBaseAccessToken.Settings): # ...`! See Beanie's [documentation on `Settings`](https://beanie-odm.dev/tutorial/defining-a-document/#settings) for details.
+    Если вы хотите добавить свои собственные настройки для вашей модели документа `AccessToken`, например, изменить имя коллекции, не забудьте позволить вашему внутреннему классу `Settings` наследовать предопределенные настройки от `BeanieBaseAccessToken`, например так: `Settings(BeanieBaseAccessToken.Settings): # ...`! См. документацию Beanie по [`Settings`](https://beanie-odm.dev/tutorial/defining-a-document/#settings) для получения дополнительной информации.
 
-### Strategy
+### Стратегия
 
 ```py
 import uuid
@@ -77,16 +76,18 @@ def get_database_strategy(
     return DatabaseStrategy(access_token_db, lifetime_seconds=3600)
 ```
 
-As you can see, instantiation is quite simple. It accepts the following arguments:
+Как видите, создание экземпляра довольно просто. Он принимает следующие аргументы:
 
-* `database` (`AccessTokenDatabase`): A database adapter instance for `AccessToken` table, like we defined above.
-* `lifetime_seconds` (`int`): The lifetime of the token in seconds.
+* `database` (`AccessTokenDatabase`): Экземпляр адаптера базы данных для таблицы `AccessToken`, как мы определили выше.
+* `lifetime_seconds` (`int`): Срок действия токена в секундах.
 
-!!! tip "Why it's inside a function?"
-    To allow strategies to be instantiated dynamically with other dependencies, they have to be provided as a callable to the authentication backend.
+!!! tip "Почему это внутри функции?"
+    Чтобы стратегии можно было создавать динамически с другими зависимостями, они должны предоставляться как вызываемые функции для аутентификационного бэкенда.
 
-    As you can see here, this pattern allows us to dynamically inject a connection to the database.
+    Как видите здесь, такой подход позволяет динамически в
 
-## Logout
+недрять подключение к базе данных.
 
-On logout, this strategy will delete the token from the database.
+## Выход из системы
+
+При выходе из системы эта стратегия удалит токен из базы данных.

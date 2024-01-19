@@ -1,14 +1,14 @@
-# Full example
+# Полный пример
 
-Here is a full working example with JWT authentication to help get you started.
+Вот полный рабочий пример с аутентификацией через JWT, чтобы помочь вам начать.
 
 !!! warning
-    Notice that **SECRET** should be changed to a strong passphrase.
-    Insecure passwords may give attackers full access to your database.
+    Обратите внимание, что **SECRET** должен быть изменен на надежную парольную фразу.
+    Небезопасные пароли могут предоставить злоумышленникам полный доступ к вашей базе данных.
 
 ## SQLAlchemy
 
-[Open :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/sqlalchemy)
+[Открыть :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/sqlalchemy)
 
 === "requirements.txt"
 
@@ -48,7 +48,7 @@ Here is a full working example with JWT authentication to help get you started.
 
 ## Beanie
 
-[Open :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/beanie)
+[Открыть :material-open-in-new:](https://github.com/fastapi-users/fastapi-users/tree/master/examples/beanie)
 
 === "requirements.txt"
 
@@ -86,6 +86,6 @@ Here is a full working example with JWT authentication to help get you started.
     --8<-- "examples/beanie/app/users.py"
     ```
 
-## What now?
+## Что дальше?
 
-You're ready to go! Be sure to check the [Usage](../usage/routes.md) section to understand how to work with **FastAPI Users**.
+Вы готовы начать! Обязательно ознакомьтесь с разделом [Использование](../usage/routes.md), чтобы понять, как работать с **FastAPI Users**.

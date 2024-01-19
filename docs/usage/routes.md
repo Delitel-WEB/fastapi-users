@@ -1,24 +1,24 @@
-# Routes
+# Маршруты
 
-You'll find here the routes exposed by **FastAPI Users**. Note that you can also review them through the [interactive API docs](https://fastapi.tiangolo.com/tutorial/first-steps/#interactive-api-docs).
+Здесь вы найдете маршруты, предоставленные **FastAPI Users**. Обратите внимание, что вы также можете просмотреть их через [интерактивные документы API](https://fastapi.tiangolo.com/tutorial/first-steps/#interactive-api-docs).
 
-## Auth router
+## Роутер аутентификации
 
-Each [authentication backend](../configuration/authentication/index.md) you [generate a router for](../configuration/routers/auth.md) will produce the following routes. Take care about the prefix you gave it, especially if you have several backends.
+Каждый [метод аутентификации](../configuration/authentication/index.md), который вы [генерируете роутер для](../configuration/routers/auth.md), создаст следующие маршруты. Обратите внимание на префикс, который вы ему дали, особенно, если у вас есть несколько методов аутентификации.
 
 ### `POST /login`
 
-Login a user against the method named `name`. Check the corresponding [authentication method](../configuration/authentication/index.md) to view the success response.
+Вход пользователя с использованием метода с именем `name`. Проверьте соответствующий [метод аутентификации](../configuration/authentication/index.md), чтобы увидеть успешный ответ.
 
-!!! abstract "Payload (`application/x-www-form-urlencoded`)"
+!!! abstract "Данные (`application/x-www-form-urlencoded`)"
     ```
     username=king.arthur@camelot.bt&password=guinevere
     ```
 
-!!! fail "`422 Validation Error`"
+!!! fail "`422 Ошибка валидации`"
 
-!!! fail "`400 Bad Request`"
-    Bad credentials or the user is inactive.
+!!! fail "`400 Плохой запрос`"
+    Неверные учетные данные или пользователь неактивен.
 
     ```json
     {
@@ -26,8 +26,8 @@ Login a user against the method named `name`. Check the corresponding [authentic
     }
     ```
 
-!!! fail "`400 Bad Request`"
-    The user is not verified.
+!!! fail "`400 Плохой запрос`"
+    Пользователь не подтвержден.
 
     ```json
     {
@@ -37,21 +37,21 @@ Login a user against the method named `name`. Check the corresponding [authentic
 
 ### `POST /logout`
 
-Logout the authenticated user against the method named `name`. Check the corresponding [authentication method](../configuration/authentication/index.md) to view the success response.
+Выход аутентифицированного пользователя с использованием метода с именем `name`. Проверьте соответствующий [метод аутентификации](../configuration/authentication/index.md), чтобы увидеть успешный ответ.
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
+    Отсутствует токен или пользователь неактивен.
 
 !!! success "`200 OK`"
-    The logout process was successful.
+    Процесс выхода прошел успешно.
 
-## Register router
+## Роутер регистрации
 
 ### `POST /register`
 
-Register a new user. Will call the `on_after_register` [handler](../configuration/user-manager.md#on_after_register) on successful registration.
+Регистрация нового пользователя. Вызовет [обработчик](../configuration/user-manager.md#on_after_register) `on_after_register` при успешной регистрации.
 
-!!! abstract "Payload"
+!!! abstract "Данные"
     ```json
     {
         "email": "king.arthur@camelot.bt",
@@ -69,10 +69,10 @@ Register a new user. Will call the `on_after_register` [handler](../configuratio
     }
     ```
 
-!!! fail "`422 Validation Error`"
+!!! fail "`422 Ошибка валидации`"
 
-!!! fail "`400 Bad Request`"
-    A user already exists with this email.
+!!! fail "`400 Плохой запрос`"
+    Пользователь с этим адресом электронной почты уже существует.
 
     ```json
     {
@@ -80,27 +80,27 @@ Register a new user. Will call the `on_after_register` [handler](../configuratio
     }
     ```
 
-!!! fail "`400 Bad Request`"
-    [Password validation](../configuration/user-manager.md#validate_password) failed.
+!!! fail "`400 Плохой запрос`"
+    Не удалось выполнить [проверку пароля](../configuration/user-manager.md#validate_password).
 
     ```json
     {
         "detail": {
             "code": "REGISTER_INVALID_PASSWORD",
-            "reason": "Password should be at least 3 characters"
+            "reason": "Пароль должен содержать не менее 3 символов"
         }
     }
     ```
 
-## Reset password router
+## Роутер сброса пароля
 
 ### `POST /forgot-password`
 
-Request a reset password procedure. Will generate a temporary token and call the `on_after_forgot_password` [handler](../configuration/user-manager.md#on_after_forgot_password) if the user exists.
+Запрос процедуры сброса пароля. Сгенерирует временный токен и вызовет [обработчик](../configuration/user-manager.md#on_after_forgot_password) `on_after_forgot_password`, если пользователь существует.
 
-To prevent malicious users from guessing existing users in your database, the route will always return a `202 Accepted` response, even if the user requested does not exist.
+Чтобы предотвратить злоупотребление со стороны злоумышленников, которые могли бы угадать существующих пользователей в вашей базе данных, маршрут всегда вернет ответ `202 Accepted`, даже если запрашиваемого пользователя не существует.
 
-!!! abstract "Payload"
+!!! abstract "Данные"
     ```json
     {
         "email": "king.arthur@camelot.bt"
@@ -111,9 +111,9 @@ To prevent malicious users from guessing existing users in your database, the ro
 
 ### `POST /reset-password`
 
-Reset a password. Requires the token generated by the `/forgot-password` route.
+Сброс пароля. Требуется токен, сгенерированный маршрутом `/forgot-password`.
 
-!!! abstract "Payload"
+!!! abstract "Данные"
     ```json
     {
         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTIyMWZmYzktNjQwZi00MzcyLTg2ZDMtY2U2NDJjYmE1NjAzIiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTcxNTA0MTkzfQ.M10bjOe45I5Ncu_uXvOmVV8QxnL-nZfcH96U90JaocI",
@@ -123,10 +123,10 @@ Reset a password. Requires the token generated by the `/forgot-password` route.
 
 !!! success "`200 OK`"
 
-!!! fail "`422 Validation Error`"
+!!! fail "`422 Ошибка валидации`"
 
-!!! fail "`400 Bad Request`"
-    Bad or expired token.
+!!! fail "`400 Плохой запрос`"
+    Неверный или устаревший токен.
 
     ```json
     {
@@ -134,27 +134,29 @@ Reset a password. Requires the token generated by the `/forgot-password` route.
     }
     ```
 
-!!! fail "`400 Bad Request`"
-    [Password validation](../configuration/user-manager.md#validate_password) failed.
+!!! fail "`400 Плохой запрос`"
+    Не удалось выполнить [проверку пароля](../configuration/user-manager.md#validate_password).
 
     ```json
     {
         "detail": {
             "code": "RESET_PASSWORD_INVALID_PASSWORD",
-            "reason": "Password should be at least 3 characters"
+            "reason": "Пароль должен содержать не менее 3 символов"
         }
     }
     ```
 
-## Verify router
+## Роутер верификации
 
 ### `POST /request-verify-token`
 
-Request a user to verify their e-mail. Will generate a temporary token and call the `on_after_request_verify` [handler](../configuration/user-manager.md#on_after_request_verify) if the user **exists**, **active** and **not already verified**.
+Запрос пользователю подтвердить свою электронную почту. Сгенерирует временный токен и вызовет [обработчик](../configuration/user-manager.md#on_after_request_verify) `on_after_request_verify`, если пользователь **существует**, **активен** и **еще не подтвержден**.
 
-To prevent malicious users from guessing existing users in your database, the route will always return a `202 Accepted` response, even if the user requested does not exist, not active or already verified.
+Чтобы предотвратить злоупотр
 
-!!! abstract "Payload"
+ебление со стороны злоумышленников, которые могли бы угадать существующих пользователей в вашей базе данных, маршрут всегда вернет ответ `202 Accepted`, даже если запрашиваемого пользователя не существует, не активен или уже подтвержден.
+
+!!! abstract "Данные"
     ```json
     {
         "email": "king.arthur@camelot.bt"
@@ -165,9 +167,9 @@ To prevent malicious users from guessing existing users in your database, the ro
 
 ### `POST /verify`
 
-Verify a user. Requires the token generated by the `/request-verify-token` route. Will call the call the `on_after_verify` [handler](../configuration/user-manager.md#on_after_verify) on success.
+Подтверждение пользователя. Требуется токен, сгенерированный маршрутом `/request-verify-token`. Вызовет [обработчик](../configuration/user-manager.md#on_after_verify) `on_after_verify` при успешном выполнении.
 
-!!! abstract "Payload"
+!!! abstract "Данные"
     ```json
     {
         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTIyMWZmYzktNjQwZi00MzcyLTg2ZDMtY2U2NDJjYmE1NjAzIiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTcxNTA0MTkzfQ.M10bjOe45I5Ncu_uXvOmVV8QxnL-nZfcH96U90JaocI"
@@ -176,10 +178,10 @@ Verify a user. Requires the token generated by the `/request-verify-token` route
 
 !!! success "`200 OK`"
 
-!!! fail "`422 Validation Error`"
+!!! fail "`422 Ошибка валидации`"
 
-!!! fail "`400 Bad Request`"
-    Bad token, not existing user or not the e-mail currently set for the user.
+!!! fail "`400 Плохой запрос`"
+    Неверный токен, несуществующий пользователь или не тот адрес электронной почты, который в данный момент установлен для пользователя.
 
     ```json
     {
@@ -187,25 +189,25 @@ Verify a user. Requires the token generated by the `/request-verify-token` route
     }
     ```
 
-!!! fail "`400 Bad Request`"
-    The user is already verified.
+!!! fail "`400 Плохой запрос`"
+    Пользователь уже подтвержден.
 
     ```json
     {
         "detail": "VERIFY_USER_ALREADY_VERIFIED"
     }
     ```
+    
+## Роутер OAuth
 
-## OAuth router
-
-Each OAuth router you define will expose the two following routes.
+Каждый определенный вами роутер OAuth будет предоставлять два следующих маршрута.
 
 ### `GET /authorize`
 
-Return the authorization URL for the OAuth service where you should redirect your user.
+Возвращает URL-адрес авторизации для службы OAuth, на которую вы должны перенаправить своего пользователя.
 
-!!! abstract "Query parameters"
-    * `scopes`: Optional list of scopes to ask for. Expected format: `scopes=a&scopes=b`.
+!!! abstract "Параметры запроса"
+    * `scopes`: Необязательный список областей, о которых нужно спросить. Ожидаемый формат: `scopes=a&scopes=b`.
 
 !!! success "`200 OK`"
     ```json
@@ -216,30 +218,30 @@ Return the authorization URL for the OAuth service where you should redirect you
 
 ### `GET /callback`
 
-Handle the OAuth callback.
+Обрабатывает обратный вызов OAuth.
 
-!!! abstract "Query parameters"
-    * `code`: OAuth callback code.
-    * `state`: State token.
-    * `error`: OAuth error.
+!!! abstract "Параметры запроса"
+    * `code`: Код обратного вызова OAuth.
+    * `state`: Токен состояния.
+    * `error`: Ошибка OAuth.
 
-Depending on the situation, several things can happen:
+В зависимости от ситуации может произойти несколько вещей:
 
-* The OAuth account exists in database and is linked to a user:
-    * OAuth account is updated in database with fresh access token.
-    * The user is authenticated following the chosen [authentication method](../configuration/authentication/index.md).
-* The OAuth account doesn't exist in database but a user with the same email address exists:
-    * By default, an HTTP 400 error is raised.
-    * If [the `associate_by_email` flag is set to `True`](../configuration/oauth.md#existing-account-association) on the router declaration, OAuth account is linked to the user. The user is authenticated following the chosen [authentication method](../configuration/authentication/index.md).
-* The OAuth account doesn't exist in database and no user with the email address exists:
-    * A new user is created and linked to the OAuth account.
-    * The user is authenticated following the chosen [authentication method](../configuration/authentication/index.md).
-
-!!! fail "`400 Bad Request`"
-    Invalid token.
+* Учетная запись OAuth существует в базе данных и связана с пользователем:
+    * Учетная запись OAuth обновляется в базе данных новым токеном доступа.
+    * Пользователь аутентифицирован в соответствии с выбранным [методом аутентификации](../configuration/authentication/index.md).
+* Учетная запись OAuth не существует в базе данных, но существует пользователь с тем же адресом электронной почты:
+    * По умолчанию вызывается ошибка HTTP 400.
+    * Если [флаг `associate_by_email` установлен в `True`](../configuration/oauth.md#existing-account-association) при объявлении роутера, учетная запись OAuth связывается с пользователем. Пользователь аутентифицирован в соответствии с выбранным [методом аутентификации](../configuration/authentication/index.md).
+* Учетная запись OAuth не существует в базе данных, и пользователь с адресом электронной почты не существует:
+    * Создается новый пользователь и связывается с учетной записью OAuth.
+    * Пользователь аутентифицирован в соответствии с выбранным [методом аутентификации](../configuration/authentication/index.md).
 
 !!! fail "`400 Bad Request`"
-    The OAuth provider didn't return an e-mail address. Make sure this provider return e-mail address through their API and you have asked for the required scope.
+    Недопустимый токен.
+
+!!! fail "`400 Bad Request`"
+    Поставщик OAuth не вернул адрес электронной почты. Убедитесь, что этот поставщик возвращает адрес электронной почты через свой API, и вы запросили необходимую область.
 
     ```json
     {
@@ -248,7 +250,7 @@ Depending on the situation, several things can happen:
     ```
 
 !!! fail "`400 Bad Request`"
-    Another user with the same e-mail address already exists.
+    Другой пользователь с тем же адресом электронной почты уже существует.
 
     ```json
     {
@@ -257,7 +259,7 @@ Depending on the situation, several things can happen:
     ```
 
 !!! fail "`400 Bad Request`"
-    User is inactive.
+    Пользователь неактивен.
 
     ```json
     {
@@ -265,19 +267,19 @@ Depending on the situation, several things can happen:
     }
     ```
 
-## OAuth association router
+## Роутер ассоциации OAuth
 
-Each OAuth association router you define will expose the two following routes.
+Каждый определенный вами роутер ассоциации OAuth будет предоставлять два следующих маршрута.
 
 ### `GET /authorize`
 
-Return the authorization URL for the OAuth service where you should redirect your user.
+Возвращает URL-адрес авторизации для службы OAuth, на которую вы должны перенаправить своего пользователя.
 
-!!! abstract "Query parameters"
-    * `scopes`: Optional list of scopes to ask for. Expected format: `scopes=a&scopes=b`.
+!!! abstract "Параметры запроса"
+    * `scopes`: Необязательный список областей, о которых нужно спросить. Ожидаемый формат: `scopes=a&scopes=b`.
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
+    Отсутствует токен или неактивный пользователь.
 
 !!! success "`200 OK`"
     ```json
@@ -288,21 +290,21 @@ Return the authorization URL for the OAuth service where you should redirect you
 
 ### `GET /callback`
 
-Handle the OAuth callback and add the OAuth account to the current authenticated active user.
+Обрабатывает обратный вызов OAuth и добавляет учетную запись OAuth к текущему аутентифицированному активному пользователю.
 
-!!! abstract "Query parameters"
-    * `code`: OAuth callback code.
-    * `state`: State token.
-    * `error`: OAuth error.
+!!! abstract "Параметры запроса"
+    * `code`: Код обратного вызова OAuth.
+    * `state`: Токен состояния.
+    * `error`: Ошибка OAuth.
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
+    Отсутствует токен или неактивный пользователь.
 
 !!! fail "`400 Bad Request`"
-    Invalid token.
+    Недопустимый токен.
 
 !!! fail "`400 Bad Request`"
-    The OAuth provider didn't return an e-mail address. Make sure this provider return e-mail address through their API and you have asked for the required scope.
+    Поставщик OAuth не вернул адрес электронной почты. Убедитесь, что этот поставщик возвращает адрес электронной почты через свой API, и вы запросили необходимую область.
 
     ```json
     {
@@ -330,17 +332,18 @@ Handle the OAuth callback and add the OAuth account to the current authenticated
     }
     ```
 
-
-## Users router
+## Роутер пользователей
 
 ### `GET /me`
 
-Return the current authenticated active user.
+Возвращает текущего аутентифицированного активного пользователя.
 
 !!! success "`200 OK`"
     ```json
     {
-        "id": "57cbb51a-ab71-4009-8802-3f54b4f2e23",
+        "id": "57cbb51a-ab71-4009-8802-3f54b4f2
+
+e23",
         "email": "king.arthur@camelot.bt",
         "is_active": true,
         "is_superuser": false
@@ -348,13 +351,13 @@ Return the current authenticated active user.
     ```
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
+    Отсутствует токен или неактивный пользователь.
 
 ### `PATCH /me`
 
-Update the current authenticated active user.
+Обновляет текущего аутентифицированного активного пользователя.
 
-!!! abstract "Payload"
+!!! abstract "Данные"
     ```json
     {
         "email": "king.arthur@tintagel.bt",
@@ -373,34 +376,34 @@ Update the current authenticated active user.
     ```
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
-
+    Отсутствует токен или неактивный пользователь.
 
 !!! fail "`400 Bad Request`"
-    [Password validation](../configuration/user-manager.md#validate_password) failed.
+    [Проверка пароля](../configuration/user-manager.md#validate_password) не удалась.
 
     ```json
     {
         "detail": {
             "code": "UPDATE_USER_INVALID_PASSWORD",
-            "reason": "Password should be at least 3 characters"
+            "reason": "Пароль должен быть не менее 3 символов"
         }
     }
     ```
 
 !!! fail "`400 Bad Request`"
-    A user with this email already exists.
+    Пользователь с этим адресом электронной почты уже существует.
+
     ```json
     {
         "detail": "UPDATE_USER_EMAIL_ALREADY_EXISTS"
     }
     ```
 
-!!! fail "`422 Validation Error`"
+!!! fail "`422 Ошибка валидации`"
 
 ### `GET /{user_id}`
 
-Return the user with id `user_id`.
+Возвращает пользователя с идентификатором `user_id`.
 
 !!! success "`200 OK`"
     ```json
@@ -413,19 +416,19 @@ Return the user with id `user_id`.
     ```
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
+    Отсутствует токен или неактивный пользователь.
 
 !!! fail "`403 Forbidden`"
-    Not a superuser.
+    Не является суперпользователем.
 
 !!! fail "`404 Not found`"
-    The user does not exist.
+    Пользователь не существует.
 
 ### `PATCH /{user_id}`
 
-Update the user with id `user_id`.
+Обновляет пользователя с идентификатором `user_id`.
 
-!!! abstract "Payload"
+!!! abstract "Данные"
     ```json
     {
         "email": "king.arthur@tintagel.bt",
@@ -446,28 +449,28 @@ Update the user with id `user_id`.
     ```
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
+    Отсутствует токен или неактивный пользователь.
 
 !!! fail "`403 Forbidden`"
-    Not a superuser.
+    Не является суперпользователем.
 
 !!! fail "`404 Not found`"
-    The user does not exist.
+    Пользователь не существует.
 
 !!! fail "`400 Bad Request`"
-    [Password validation](../configuration/user-manager.md#validate_password) failed.
+    [Проверка пароля](../configuration/user-manager.md#validate_password) не удалась.
 
     ```json
     {
         "detail": {
             "code": "UPDATE_USER_INVALID_PASSWORD",
-            "reason": "Password should be at least 3 characters"
+            "reason": "Пароль должен быть не менее 3 символов"
         }
     }
     ```
 
 !!! fail "`400 Bad Request`"
-    A user with this email already exists.
+    Пользователь с этим адресом электронной почты уже существует.
     ```json
     {
         "detail": "UPDATE_USER_EMAIL_ALREADY_EXISTS"
@@ -476,15 +479,15 @@ Update the user with id `user_id`.
 
 ### `DELETE /{user_id}`
 
-Delete the user with id `user_id`.
+Удаляет пользователя с идентификатором `user_id`.
 
 !!! success "`204 No content`"
 
 !!! fail "`401 Unauthorized`"
-    Missing token or inactive user.
+    Отсутствует токен или неактивный пользователь.
 
 !!! fail "`403 Forbidden`"
-    Not a superuser.
+    Не является суперпользователем.
 
 !!! fail "`404 Not found`"
-    The user does not exist.
+    Пользователь не существует.
